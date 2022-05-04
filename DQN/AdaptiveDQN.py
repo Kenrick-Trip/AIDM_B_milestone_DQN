@@ -10,7 +10,6 @@ class AdaptiveDQN(DQN):
 
     def _on_step(self):
         """Overwrite _on_step method from DQN class"""
-        super()._on_step()
         self._n_calls += 1
         if self._n_calls % self.target_update_interval == 0:
             polyak_update(self.q_net.parameters(), self.q_net_target.parameters(), self.tau)
