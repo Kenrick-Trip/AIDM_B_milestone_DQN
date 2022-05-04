@@ -18,4 +18,7 @@ class AdaptiveDQN(DQN):
         # self.exploration_rate = self.exploration_schedule(self._current_progress_remaining)
         self.exploration_rate = 1
 
+        # Print the last observation
+        # print(f"{self._last_obs=}")
+
         self.logger.record("rollout/exploration_rate", self.exploration_rate)
