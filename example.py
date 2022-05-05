@@ -1,6 +1,7 @@
 import gym
 
 from DQN.AdaptiveDQN import AdaptiveDQN
+from environments.EnvWrapper import EnvWrapper
 
 
 def main():
@@ -11,12 +12,12 @@ def main():
     # Start learning from the 0th timestep
     learning_starts = 0
 
-    env = gym.make("CartPole-v1")
+    env = EnvWrapper(gym.make("CartPole-v1"))
     model = AdaptiveDQN("MlpPolicy", env, verbose=1, learning_starts=learning_starts, seed=seed)
-    model.learn(total_timesteps=10000)
+    model.learn(total_timesteps=1000)
 
     obs = env.reset()
-    for i in range(1000):
+    for i in range(100):
         action, _states = model.predict(obs, deterministic=True)
         obs, reward, done, info = env.step(action)
         env.render()
