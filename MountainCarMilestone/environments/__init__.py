@@ -1,1 +1,1 @@
-from environments.mountain_car_milestones import MountainCarMilestonesEnv
+from MountainCarMilestone.environments.mountain_car_milestones import MountainCarMilestonesEnv

@@ -247,13 +247,36 @@ class MountainCarMilestonesEnv(gym.Env):
 
         gfxdraw.aapolygon(
             self.surf,
+            [(flagm1x, flagm1y2), (flagm1x, flagm1y2 - 5), (flagm1x + 10, flagm1y2 - 2)],
+            (204, 0, 0),
+        )
+        gfxdraw.filled_polygon(
+            self.surf,
+            [(flagm1x, flagm1y2), (flagm1x, flagm1y2 - 5), (flagm1x + 10, flagm1y2 - 2)],
+            (204, 0, 0),
+        )
+
+        gfxdraw.aapolygon(
+            self.surf,
+            [(flagm2x, flagm2y2), (flagm2x, flagm2y2 - 5), (flagm2x + 10, flagm2y2 - 2)],
+            (204, 0, 0),
+        )
+        gfxdraw.filled_polygon(
+            self.surf,
+            [(flagm2x, flagm2y2), (flagm2x, flagm2y2 - 5), (flagm2x + 10, flagm2y2 - 2)],
+            (204, 0, 0),
+        )
+
+
+        gfxdraw.aapolygon(
+            self.surf,
             [(flagx, flagy2), (flagx, flagy2 - 10), (flagx + 25, flagy2 - 5)],
-            (204, 204, 0),
+            (0, 204, 0),
         )
         gfxdraw.filled_polygon(
             self.surf,
             [(flagx, flagy2), (flagx, flagy2 - 10), (flagx + 25, flagy2 - 5)],
-            (204, 204, 0),
+            (0, 204, 0),
         )
 
         self.surf = pygame.transform.flip(self.surf, False, True)

@@ -1,5 +1,5 @@
 import gym
-
+from MountainCarMilestone import *
 from DQN.AdaptiveDQN import AdaptiveDQN
 
 
@@ -11,7 +11,8 @@ def main():
     # Start learning from the 0th timestep
     learning_starts = 0
 
-    env = gym.make("CartPole-v1")
+    # env = gym.make("CartPole-v1")
+    env = gym.make("MountainCarMilestones-v0")
     model = AdaptiveDQN("MlpPolicy", env, verbose=1, learning_starts=learning_starts, seed=seed)
     model.learn(total_timesteps=10000)
 
