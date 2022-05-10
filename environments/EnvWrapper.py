@@ -9,6 +9,7 @@ from environments.Milestone import Milestone
 
 class EnvWrapper:
     """Wrapper class for a Gym environment that enables the milestone system."""
+
     def __init__(self, env: gym.Env, milestones: List[Milestone] = None):
         self.env = env
         self.milestones = milestones if milestones else []
