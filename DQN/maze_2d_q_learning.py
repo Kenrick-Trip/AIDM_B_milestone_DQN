@@ -4,7 +4,7 @@ import math
 import random
 
 import gym
-from ..environments import gym_maze
+from environments import gym_maze
 
 def simulate():
 
