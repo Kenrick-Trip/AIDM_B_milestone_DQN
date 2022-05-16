@@ -1,0 +1,7 @@
+# config file for milestone DQN
+
+SEED: 123
+TIMESTEPS: 100000
+ENV: "MountainCar-v0"
+POLICY: "MlpPolicy"
+EPS_METHOD: 2

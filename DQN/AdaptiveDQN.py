@@ -5,12 +5,13 @@ import numpy as np
 
 
 class AdaptiveDQN(DQN):
-    def __init__(self, env_wrapper: EnvWrapper, *args, eps_zero=1.0, decay_func=np.sqrt, **kwargs):
+    def __init__(self, env_wrapper: EnvWrapper, *args, eps_method, eps_zero=1.0, decay_func=np.sqrt, **kwargs):
         super().__init__(*args, **kwargs)
         self.env_wrapper = env_wrapper
         self.counter = np.zeros(self.env_wrapper.n_milestones, dtype=int)
         self.eps_zero = eps_zero
         self.decay_func = decay_func
+        self.method = eps_method
 
         self.cached_milestones_reached = None
 
@@ -48,8 +49,15 @@ class AdaptiveDQN(DQN):
         """
         eps = self.get_eps()
         curr_milestone = self.get_curr_milestones()
-        self.update_counter(curr_milestone)
-        return eps[curr_milestone]
+
+        if self.method == 1:
+            self.update_counter(curr_milestone)
+            return eps[curr_milestone]
+        elif self.method == 2:
+            self.update_counter(curr_milestone)
+            return eps[curr_milestone + 1]
+        else:
+            print("ERROR: epsilon selection method is not valid, must be 1 or 2")
 
     def _on_step(self):
         """Overwrite _on_step method from DQN class"""
