@@ -2,6 +2,7 @@ import gym
 import numpy as np
 import yaml
 
+from stable_baselines3.common.logger import make_output_format
 from DQN.AdaptiveDQN import AdaptiveDQN
 from environments.EnvWrapper import EnvWrapper
 from environments.Milestone import PassingMilestone
@@ -44,11 +45,12 @@ def main(config, milestones):
     learning_starts = 0
 
     env = EnvWrapper(gym.make(config['ENV']), milestones)
-    model = AdaptiveDQN(env, config['POLICY'], env, eps_method=config['EPS_METHOD'], decay_func=lambda x: np.sqrt(np.sqrt(x)), verbose=1, learning_starts=learning_starts, seed=seed)
+    model = AdaptiveDQN(env, config['POLICY'], env, eps_method=config['EPS_METHOD'], plot=config['PLOT'],
+                        decay_func=lambda x: np.sqrt(np.sqrt(x)), verbose=1, learning_starts=learning_starts, seed=seed)
     model.learn(total_timesteps=config['TIMESTEPS'])
 
     obs = env.reset()
-    for i in range(config['TIMESTEPS']):
+    for i in range(config['DEMO_STEPS']):
         action, _states = model.predict(obs, deterministic=True)
         obs, reward, done, info = env.step(action)
         env.render()

@@ -1,4 +1,5 @@
 stable-baselines3
-gym
+gym~=0.21.0
 numpy>=1.21
-Pyyaml
+Pyyaml~=6.0
+matplotlib~=3.5.2
