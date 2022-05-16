@@ -1,3 +1,4 @@
+from DQN.uncertainty import CountUncertainty
 from stable_baselines3 import DQN
 from stable_baselines3.common.utils import polyak_update
 from stable_baselines3.common.logger import Figure
@@ -8,7 +9,9 @@ import matplotlib.pyplot as plt
 
 
 class AdaptiveDQN(DQN):
-    def __init__(self, env_wrapper: EnvWrapper, *args, eps_method, plot, eps_zero=1.0, decay_func=np.sqrt, **kwargs):
+    def __init__(self, env_wrapper: EnvWrapper, *args, eps_method, plot, eps_zero=1.0, decay_func=np.sqrt,
+                 uncertainty=None,
+                 **kwargs):
         super().__init__(*args, **kwargs)
         self.env_wrapper = env_wrapper
         self.counter = np.zeros(self.env_wrapper.n_milestones, dtype=int)
@@ -17,6 +20,7 @@ class AdaptiveDQN(DQN):
         self.method = eps_method
         self.plot = plot
         self.cached_milestones_reached = None
+        self.uncertainty = uncertainty
 
         if self.plot == 1:
             self.exploration_array = []
@@ -84,7 +88,7 @@ class AdaptiveDQN(DQN):
             self.update_counter(curr_milestone)
             return eps[curr_milestone + 1]
         else:
-            print("ERROR: epsilon selection method is not valid, must be 1 or 2")
+            raise ValueError("ERROR: epsilon selection method is not valid, must be 1 or 2")
 
     def _on_step(self):
         """Overwrite _on_step method from DQN class"""
@@ -109,3 +113,8 @@ class AdaptiveDQN(DQN):
         else:
             super()._on_step()
             return True
+
+    def _store_transition(self, replay_buffer, buffer_action, new_obs, reward, dones, infos) -> None:
+        if self.uncertainty is not None:
+            self.uncertainty.observe(new_obs)
+        return super()._store_transition(replay_buffer, buffer_action, new_obs, reward, dones, infos)

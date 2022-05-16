@@ -13,7 +13,7 @@ from environments.MazeMilestoneGenerator import MazeMilestonesGenerator
 from environments.Milestone import PassingMilestone, ExactMilestone
 from environments.gym_maze import *
 from environments.gym_maze.envs import MazeEnv
-
+from DQN.uncertainty import CountUncertainty
 
 def read_yaml():
     with open("maze.yaml", "r") as f:
@@ -57,9 +57,11 @@ def main(config, milestones):
         milestone_generator = MazeMilestonesGenerator(env)
         milestones = milestone_generator.calculate_milestones(num_milestones)
     env = EnvWrapper(env, milestones)
+    uncertainty = CountUncertainty(env, **config['UNCERTAINTY_KWARGS']) if 'UNCERTAINTY_KWARGS' in config else None
+
     model = AdaptiveDQN(env, config['POLICY'], env, eps_method=config['EPS_METHOD'], plot=config['PLOT'],
                         decay_func=lambda x: np.sqrt(np.sqrt(x)), verbose=1, learning_starts=learning_starts, seed=seed,
-                        policy_kwargs=config['POLICY_KWARGS'])
+                        policy_kwargs=config['POLICY_KWARGS'], uncertainty=uncertainty)
     model.learn(total_timesteps=config['TIMESTEPS'])
 
     # We have to force enable render for maze
