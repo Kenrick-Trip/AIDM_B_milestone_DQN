@@ -1,0 +1,7 @@
+SEED: 123
+TIMESTEPS: 10000
+DEMO_STEPS: 10000
+ENV: "maze-random-5x5-v0"
+POLICY: "MlpPolicy"
+EPS_METHOD: 1
+PLOT: 0 # enable = 1, disable = 0

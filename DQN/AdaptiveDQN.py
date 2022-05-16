@@ -88,19 +88,24 @@ class AdaptiveDQN(DQN):
 
     def _on_step(self):
         """Overwrite _on_step method from DQN class"""
-        self._n_calls += 1
-        if self._n_calls % self.target_update_interval == 0:
-            polyak_update(self.q_net.parameters(), self.q_net_target.parameters(), self.tau)
+        if self.env_wrapper.uses_milestones:
+            self._n_calls += 1
+            if self._n_calls % self.target_update_interval == 0:
+                polyak_update(self.q_net.parameters(), self.q_net_target.parameters(), self.tau)
+                if self.plot == 1:
+                    self.plot_results()
+
             if self.plot == 1:
-                self.plot_results()
+                self.exploration_array = np.append(self.exploration_array, self.exploration_rate)
+                self.milestone_array = np.append(self.milestone_array, self.get_curr_milestones())
+                self.reward_array = np.append(self.reward_array, self.env_wrapper.reward)
+                self.episode_array = np.append(self.episode_array, self._episode_num)
 
-        if self.plot == 1:
-            self.exploration_array = np.append(self.exploration_array, self.exploration_rate)
-            self.milestone_array = np.append(self.milestone_array, self.get_curr_milestones())
-            self.reward_array = np.append(self.reward_array, self.env_wrapper.reward)
-            self.episode_array = np.append(self.episode_array, self._episode_num)
+            self.exploration_rate = self._get_exploration_rate()
+            self.logger.record("rollout/exploration_rate", self.exploration_rate)
 
-        self.exploration_rate = self._get_exploration_rate()
-        self.logger.record("rollout/exploration_rate", self.exploration_rate)
-
-        return True
+            # Why is this return true here?
+            return True
+        else:
+            super()._on_step()
+            return True
