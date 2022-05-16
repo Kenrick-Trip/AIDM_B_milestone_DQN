@@ -16,14 +16,15 @@ class EnvWrapper:
         self.n_milestones = len(milestones)
         self.reward = reward
 
-        if self.n_milestones > 0:
+        if self.uses_milestones:
             self.milestones_reached = np.zeros(self.n_milestones, dtype=np.bool)
 
             # Add a boolean variable for each milestone
             # We extend the original Box space of the gym environment
             # TODO: This might not work for every environment?
-            new_low = np.append(self.env.observation_space.low, np.zeros(self.n_milestones, dtype=np.float32))
-            new_high = np.append(self.env.observation_space.high, np.ones(self.n_milestones, dtype=np.float32))
+            dtype = env.observation_space.dtype
+            new_low = np.append(self.env.observation_space.low, np.zeros(self.n_milestones, dtype=dtype))
+            new_high = np.append(self.env.observation_space.high, np.ones(self.n_milestones, dtype=dtype))
             self.observation_space = gym.spaces.Box(low=new_low, high=new_high)
         else:
             self.observation_space = env.observation_space
@@ -31,9 +32,10 @@ class EnvWrapper:
     def step(self, action):
         obs, reward, done, info = self.env.step(action=action)
 
-        if self.n_milestones > 0:
+        if self.uses_milestones:
             # Update the milestones if we are working with the milestone system
             extra_reward = self.update_milestones(obs)
+
             reward += extra_reward
             self.reward = reward
             obs = np.append(obs, self.milestones_reached.astype(np.float32))
@@ -60,7 +62,7 @@ class EnvWrapper:
 
     def reset(self):
         obs = self.env.reset()
-        if self.n_milestones > 0:
+        if self.uses_milestones:
             self.milestones_reached = np.zeros(self.n_milestones, dtype=np.bool)
             obs = np.append(obs, self.milestones_reached.astype(np.float32))
         return obs
@@ -74,6 +76,10 @@ class EnvWrapper:
 
     def seed(self, seed=None):
         self.env.seed(seed=seed)
+        
+    @property
+    def uses_milestones(self):
+        return self.n_milestones > 0
 
     @property
     def action_space(self):
