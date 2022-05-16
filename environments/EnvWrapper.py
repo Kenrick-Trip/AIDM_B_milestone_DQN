@@ -10,10 +10,11 @@ from environments.Milestone import Milestone
 class EnvWrapper:
     """Wrapper class for a Gym environment that enables the milestone system."""
 
-    def __init__(self, env: gym.Env, milestones: List[Milestone] = None):
+    def __init__(self, env: gym.Env, milestones: List[Milestone] = None, reward=0):
         self.env = env
         self.milestones = milestones if milestones else []
         self.n_milestones = len(milestones)
+        self.reward = reward
 
         if self.uses_milestones:
             self.milestones_reached = np.zeros(self.n_milestones, dtype=np.bool)
@@ -36,6 +37,7 @@ class EnvWrapper:
             extra_reward = self.update_milestones(obs)
 
             reward += extra_reward
+            self.reward = reward
             obs = np.append(obs, self.milestones_reached.astype(np.float32))
 
         return obs, reward, done, info
