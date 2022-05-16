@@ -44,7 +44,11 @@ def main(config, milestones):
     learning_starts = 0
 
     env = EnvWrapper(gym.make(config['ENV']), milestones)
-    model = AdaptiveDQN(env, config['POLICY'], env, eps_method=config['EPS_METHOD'], decay_func=lambda x: np.sqrt(np.sqrt(x)), verbose=1, learning_starts=learning_starts, seed=seed)
+
+    model = AdaptiveDQN(env, config['POLICY'], env, eps_method=config['EPS_METHOD'],
+                        decay_func=lambda x: np.sqrt(np.sqrt(x)), verbose=1, learning_starts=learning_starts, seed=seed,
+                        policy_kwargs=config['POLICY_KWARGS'])
+
     model.learn(total_timesteps=config['TIMESTEPS'])
 
     obs = env.reset()
