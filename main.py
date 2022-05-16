@@ -7,6 +7,7 @@ import numpy as np
 import yaml
 
 from DQN.AdaptiveDQN import AdaptiveDQN
+from DQN.uncertainty import CountUncertainty
 from environments.EnvWrapper import EnvWrapper
 from environments.MazeMilestoneGenerator import MazeMilestoneGenerator, MountainCarMilestoneGenerator
 
@@ -25,10 +26,10 @@ class Runner:
 
         # Wrap environment
         self.env = EnvWrapper(self.env, self.milestones)
-
+        self.uncertainty = CountUncertainty(self.env, **config['uncertainty_kwargs']) if 'uncertainty_kwargs' in config else None
         self.model = AdaptiveDQN(self.env, config["policy"], self.env, eps_method=config["method"], plot=config["plot"],
                                  decay_func=lambda x: np.sqrt(np.sqrt(x)), verbose=1, learning_starts=learning_starts,
-                                 seed=config["seed"])
+                                 seed=config["seed"], uncertainty=self.uncertainty)
 
     def generate_milestones(self):
         if "maze" in self.config["env"].lower():
