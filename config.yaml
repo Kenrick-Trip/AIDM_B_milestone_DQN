@@ -2,8 +2,10 @@
 
 SEED: 123
 TIMESTEPS: 100000
+DEMO_STEPS: 10000
 ENV: "MountainCar-v0"
 POLICY: "MlpPolicy"
 EPS_METHOD: 2
+PLOT: 1 # enable = 1, disable = 0
 POLICY_KWARGS:
   net_arch: [ 64,64 ]
