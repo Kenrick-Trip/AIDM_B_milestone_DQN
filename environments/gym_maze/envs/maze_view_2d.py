@@ -10,11 +10,14 @@ class MazeView2D:
     def __init__(self, maze_name="Maze2D", maze_file_path=None,
                  maze_size=(30, 30), screen_size=(600, 600),
                  has_loops=False, num_portals=0, enable_render=True):
+        self.screen_size = screen_size
+        self.maze_name = maze_name
 
         # PyGame configurations
-        pygame.init()
-        pygame.display.set_caption(maze_name)
-        self.clock = pygame.time.Clock()
+        if enable_render:
+            pygame.init()
+            pygame.display.set_caption(maze_name)
+            self.clock = pygame.time.Clock()
         self.__game_over = False
         self.__enable_render = enable_render
 
@@ -345,6 +348,39 @@ class MazeView2D:
     @property
     def CELL_H(self):
         return float(self.SCREEN_H) / float(self.maze.MAZE_H)
+
+    def do_enable_render(self):
+        self.__enable_render = True
+
+        pygame.init()
+        pygame.display.set_caption(self.maze_name)
+        self.clock = pygame.time.Clock()
+        # to show the right and bottom border
+        self.screen = pygame.display.set_mode(self.screen_size)
+        self.__screen_size = tuple(map(sum, zip(self.screen_size, (-1, -1))))
+
+        # Create a background
+        self.background = pygame.Surface(self.screen.get_size()).convert()
+        self.background.fill((255, 255, 255))
+
+        # Create a layer for the maze
+        self.maze_layer = pygame.Surface(self.screen.get_size()).convert_alpha()
+        self.maze_layer.fill((0, 0, 0, 0,))
+
+        # show the maze
+        self.__draw_maze()
+
+        # show the portals
+        self.__draw_portals()
+
+        # show the robot
+        self.__draw_robot()
+
+        # show the entrance
+        self.__draw_entrance()
+
+        # show the goal
+        self.__draw_goal()
 
 
 class Maze:

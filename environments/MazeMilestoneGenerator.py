@@ -4,11 +4,12 @@ import gym
 import numpy as np
 
 from environments.Milestone import ExactMilestone
+from environments.gym_maze.envs import MazeEnv
 
 
 class MazeMilestonesGenerator:
     """Copy of maze_2d_dijkstra.py but then in a class"""
-    def __init__(self, env: gym.Env):
+    def __init__(self, env: MazeEnv):
         self.env = env
 
         # Number of discrete states (bucket) per state dimension

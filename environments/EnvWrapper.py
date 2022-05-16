@@ -31,18 +31,12 @@ class EnvWrapper:
     def step(self, action):
         obs, reward, done, info = self.env.step(action=action)
 
-        print(f"{reward=}")
-
         if self.uses_milestones:
             # Update the milestones if we are working with the milestone system
             extra_reward = self.update_milestones(obs)
 
-            print(f"{extra_reward=}")
-
             reward += extra_reward
             obs = np.append(obs, self.milestones_reached.astype(np.float32))
-
-        print(f"{reward=}")
 
         return obs, reward, done, info
 

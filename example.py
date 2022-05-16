@@ -10,6 +10,7 @@ from environments.EnvWrapper import EnvWrapper
 from environments.MazeMilestoneGenerator import MazeMilestonesGenerator
 from environments.Milestone import PassingMilestone, ExactMilestone
 from environments.gym_maze import *
+from environments.gym_maze.envs import MazeEnv
 
 
 def main():
@@ -48,6 +49,12 @@ def main():
     model = AdaptiveDQN(env, "MlpPolicy", env, decay_func=lambda x: np.sqrt(np.sqrt(x)), verbose=1, learning_starts=learning_starts, seed=seed)
     # model = DQN("MlpPolicy", env, verbose=1, learning_starts=learning_starts, seed=seed)
     model.learn(total_timesteps=10000)
+
+    try:
+        print("Enable render")
+        env.env.env.do_enable_render()
+    except AttributeError:
+        pass
 
     obs = env.reset()
     for i in range(1000):

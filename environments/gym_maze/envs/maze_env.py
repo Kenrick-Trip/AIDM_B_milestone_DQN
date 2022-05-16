@@ -16,6 +16,9 @@ class MazeEnv(gym.Env):
     def __init__(self, maze_file=None, maze_size=None, mode=None, enable_render=True):
 
         self.viewer = None
+
+        # Force it to be false for now
+        enable_render = False
         self.enable_render = enable_render
 
         if maze_file:
@@ -119,6 +122,15 @@ class MazeEnv(gym.Env):
             self.maze_view.quit_game()
 
         return self.maze_view.update_milestones(m_states, mode, timestamp=timestamp)
+
+    def do_enable_render(self):
+        """Enable rendering, start up pygame"""
+        if self.enable_render:
+            return
+
+        self.enable_render = True
+        self.maze_view.do_enable_render()
+
 
 class MazeEnvSample5x5(MazeEnv):
 
