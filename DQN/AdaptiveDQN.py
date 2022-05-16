@@ -53,9 +53,12 @@ class AdaptiveDQN(DQN):
 
     def _on_step(self):
         """Overwrite _on_step method from DQN class"""
-        self._n_calls += 1
-        if self._n_calls % self.target_update_interval == 0:
-            polyak_update(self.q_net.parameters(), self.q_net_target.parameters(), self.tau)
+        if self.env_wrapper.uses_milestones:
+            self._n_calls += 1
+            if self._n_calls % self.target_update_interval == 0:
+                polyak_update(self.q_net.parameters(), self.q_net_target.parameters(), self.tau)
 
-        self.exploration_rate = self._get_exploration_rate()
-        self.logger.record("rollout/exploration_rate", self.exploration_rate)
+            self.exploration_rate = self._get_exploration_rate()
+            self.logger.record("rollout/exploration_rate", self.exploration_rate)
+        else:
+            super()._on_step()

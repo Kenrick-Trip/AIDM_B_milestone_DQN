@@ -47,7 +47,7 @@ class MazeEnv(gym.Env):
 
         # observation is the x, y coordinate of the grid
         low = np.zeros(len(self.maze_size), dtype=int)
-        high =  np.array(self.maze_size, dtype=int) - np.ones(len(self.maze_size), dtype=int)
+        high = np.array(self.maze_size, dtype=int) - np.ones(len(self.maze_size), dtype=int)
         self.observation_space = spaces.Box(low, high, dtype=np.int64)
 
         # initial condition

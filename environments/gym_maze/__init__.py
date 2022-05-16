@@ -15,8 +15,8 @@ register(
 
 register(
     id='maze-random-5x5-v0',
-    entry_point='gym_maze.envs:MazeEnvRandom5x5',
-    max_episode_steps=2000,
+    entry_point='environments.gym_maze.envs:MazeEnvRandom5x5',
+    max_episode_steps=1000,
     nondeterministic=True,
 )
 
