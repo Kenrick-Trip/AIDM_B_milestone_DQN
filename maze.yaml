@@ -1,13 +1,13 @@
-SEED: 123
-TIMESTEPS: 10000
-DEMO_STEPS: 10000
-ENV: "maze-random-5x5-v0"
-POLICY: "MlpPolicy"
-EPS_METHOD: 1
-PLOT: 0 # enable = 1, disable = 0
-POLICY_KWARGS:
+seed: 123
+trainsteps: 20000
+demosteps: 10000
+env: "maze-random-5x5-v0"
+policy: "MlpPolicy"
+method: 1
+plot: 0 # enable = 1, disable = 0
+policy_kwargs:
   net_arch: [ 64,64 ]
-UNCERTAINTY_KWARGS:
+uncertainty_kwargs:
   scale: 1
   state_bounds: null
   resolution: 5

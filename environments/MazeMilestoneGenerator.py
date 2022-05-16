@@ -1,16 +1,27 @@
-from typing import List
+from abc import ABC, abstractmethod
+from typing import List, Optional
 
 import gym
 import numpy as np
 
-from environments.Milestone import ExactMilestone
+from environments.Milestone import ExactMilestone, Milestone, PassingMilestone
 from environments.gym_maze.envs import MazeEnv
 
 
-class MazeMilestonesGenerator:
-    """Copy of maze_2d_dijkstra.py but then in a class"""
-    def __init__(self, env: MazeEnv):
+class MilestoneGenerator(ABC):
+    def __init__(self, env: gym.Env):
         self.env = env
+
+    @abstractmethod
+    def get_milestones(self, n: int) -> List[Milestone]:
+        pass
+
+
+class MazeMilestoneGenerator(MilestoneGenerator):
+    """Copy of maze_2d_dijkstra.py but then in a class"""
+
+    def __init__(self, env: MazeEnv):
+        super().__init__(env)
 
         # Number of discrete states (bucket) per state dimension
         self.maze_size = tuple((env.observation_space.high + np.ones(env.observation_space.shape)).astype(int))
@@ -68,14 +79,33 @@ class MazeMilestonesGenerator:
                         curDis -= 1
         return dist, shortest_path
 
-    def calculate_milestones(self, num_milestones: int) -> List[ExactMilestone]:
+    def get_milestones(self, n: int) -> List[Milestone]:
         dist, shortest_path = self.solve_dijkstra()
         tot_dist = dist[tuple(self.final_state)]
 
         milestones = []
         for state in shortest_path[1:-1]:
-            if dist[tuple(state)] <= tot_dist * (num_milestones - len(milestones) - 1) / num_milestones:
+            if dist[tuple(state)] <= tot_dist * (n - len(milestones) - 1) / n:
                 milestones.append(ExactMilestone(reward=dist[tuple(state)], goal_state=state))
-            if len(milestones) == num_milestones:
+            if len(milestones) == n:
                 break
+        return milestones
+
+
+class MountainCarMilestoneGenerator(MilestoneGenerator):
+    def __init__(self, env: gym.Env):
+        super().__init__(env)
+
+    def get_milestones(self, n: int,
+                       begin_position: Optional[float] = -0.4,
+                       end_position: Optional[float] = 0.5) -> List[Milestone]:
+        """
+        Calculate position milestones for MountainCar
+        First milestone will be at begin_position
+        Last milestone will be at end_position
+        """
+        spacing = (end_position - begin_position) / (n - 1)
+        milestone_locations = [begin_position + i * spacing for i in range(n)]
+        milestones = [PassingMilestone(goal_state=np.array([loc, np.nan]), reward=(i+1)*2)
+                      for i, loc in enumerate(milestone_locations)]
         return milestones
