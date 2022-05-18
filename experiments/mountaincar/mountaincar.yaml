@@ -1,7 +1,8 @@
 seed: 123
-trainsteps: 10000
-demosteps: 10000
+trainsteps: 20000
+demosteps: 100
 env: "MountainCar-v0"
+num_milestones: 10
 policy: "MlpPolicy"
 method: 1
 plot: 1 # enable = 1, disable = 0

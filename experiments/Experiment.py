@@ -8,8 +8,13 @@ import argparse
 
 
 class Experiment:
-    def __init__(self, config: dict, results_dir: str, num_milestones: int = 10):
-        self.num_milestones = num_milestones
+    def __init__(self, config: dict, results_dir: str):
+        """
+
+        :param config:
+        :param results_dir:
+        :param num_milestones:
+        """
         self.results_dir = results_dir
         self.config = config
 
