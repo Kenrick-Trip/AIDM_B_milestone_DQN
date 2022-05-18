@@ -15,6 +15,8 @@ class EnvWrapper:
         self.milestones = milestones if milestones else []
         self.n_milestones = len(milestones)
         self.reward = reward
+        self.cached_milestones_reached = None
+        self.counter = np.zeros(self.n_milestones, dtype=int)
 
         if self.uses_milestones:
             self.milestones_reached = np.zeros(self.n_milestones, dtype=np.bool)
@@ -35,9 +37,10 @@ class EnvWrapper:
         if self.uses_milestones:
             # Update the milestones if we are working with the milestone system
             extra_reward = self.update_milestones(obs)
-
             reward += extra_reward
             self.reward = reward
+
+            # self.update_counter(self.get_curr_milestones())
             obs = np.append(obs, self.milestones_reached.astype(np.float32))
 
         return obs, reward, done, info
@@ -60,8 +63,31 @@ class EnvWrapper:
         self.milestones_reached = are_milestones_reached
         return reward
 
+    def get_curr_milestones(self) -> int:
+        """
+        Returns the current milestone i.e. index of last boolean true in reached milestones
+        :return: integer (index)
+        """
+        indexes = np.where(self.milestones_reached)[0]
+        return indexes[-1] if len(indexes) > 0 else 0
+
+    def update_counter(self, milestones_reached):
+        """
+        Updates the counter, whenever the milestones_reached array changed, update the counter
+        :param milestones_reached:
+        """
+        if self.cached_milestones_reached is not None and not np.array_equal(self.cached_milestones_reached,
+                                                                             milestones_reached):
+            self.counter[self.get_curr_milestones()] += 1
+
+        self.cached_milestones_reached = milestones_reached
+
+    def reset_counter(self):
+        self.counter = np.zeros(self.n_milestones, dtype=int)
+
     def reset(self):
         obs = self.env.reset()
+        self.counter[0] += 1
         if self.uses_milestones:
             self.milestones_reached = np.zeros(self.n_milestones, dtype=np.bool)
             obs = np.append(obs, self.milestones_reached.astype(np.float32))
