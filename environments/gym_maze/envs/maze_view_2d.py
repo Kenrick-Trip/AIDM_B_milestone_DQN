@@ -263,7 +263,7 @@ class MazeView2D:
 
             pygame.draw.line(self.maze_layer, colour, line_head, line_tail)
 
-    def __draw_robot(self, colour=(0, 0, 150), transparency=255):
+    def __draw_robot(self, colour=(255, 255, 0), transparency=255):
 
         if self.__enable_render is False:
             return

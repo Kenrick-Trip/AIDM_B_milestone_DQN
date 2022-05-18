@@ -11,5 +11,5 @@ policy_kwargs:
 uncertainty_kwargs:
   scale: 1
   state_bounds: null
-  resolution: 5
+  resolution: 25
   first_n_dim: 1
