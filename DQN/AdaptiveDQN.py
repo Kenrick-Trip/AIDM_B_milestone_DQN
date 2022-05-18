@@ -21,14 +21,14 @@ class AdaptiveDQN(DQN):
         self.plot = plot
         self.uncertainty = uncertainty
         self.plot_update_interval = plot_update_interval
-        self.heat_map = HeatMap(env_wrapper, uncertainty)
 
         if self.plot == 1:
             self.exploration_array = []
             self.milestone_array = []
             self.reward_array = []
             self.episode_array = []
-            self.fig, self.axis = plt.subplots(2, 2)
+            self.fig, self.axis = plt.subplots(2, 3)
+            self.heat_map = HeatMap(env_wrapper, uncertainty, axis=self.axis[0, 2])
             plt.ion()
             plt.show()
 
@@ -89,6 +89,7 @@ class AdaptiveDQN(DQN):
             if self.plot == 1:
                 self.plot_results()
                 self.heat_map.generate1D()
+                self.heat_map.reset_count()
 
         if self.plot == 1:
             self.exploration_array = np.append(self.exploration_array, self.exploration_rate)

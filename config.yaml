@@ -5,7 +5,7 @@ env: "MountainCar-v0"
 policy: "MlpPolicy"
 method: 1
 plot: 1 # enable = 1, disable = 0
-plot_update_interval: 1000
+plot_update_interval: 500
 policy_kwargs:
   net_arch: [ 64,64 ]
 uncertainty_kwargs:

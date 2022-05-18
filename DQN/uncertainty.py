@@ -29,10 +29,10 @@ class CountUncertainty:
     def calculate_bins(self):
         """Divide the state space into n bins"""
         bound_sizes = np.array([b-a for a,b in self.bounds])
-        bin_sizes = bound_sizes / self.resolution
+        self.bin_sizes = bound_sizes / self.resolution
         low_bounds = np.array([bound[0] for bound in self.bounds])
-        self.bin_ends = low_bounds + np.cumsum(np.full(self.resolution, bin_sizes[0]))
-        self.bin_begins = self.bin_ends - bin_sizes[0]
+        self.bin_ends = low_bounds + np.cumsum(np.full(self.resolution, self.bin_sizes[0]))
+        self.bin_begins = self.bin_ends - self.bin_sizes[0]
         self.bin_mids = (self.bin_begins + self.bin_ends) / 2
 
     def state_bin(self, state):
