@@ -18,7 +18,7 @@ import argparse
 
 
 class Experiment:
-    def __init__(self, num_milestones: int = 10, file:str ="mountaincar.yaml"):
+    def __init__(self, num_milestones: int = 10, file:str ="maze.yaml"):
         self.num_milestones = num_milestones
         self.config = self._read_yaml(file) if file != "parse" else self.parse_args()
         print("Starting Experiment.. config ", file)
@@ -77,7 +77,7 @@ class Experiment:
         parser = argparse.ArgumentParser()
         parser.add_argument("-c", "--config", help="Config file to use. Other settings will override the config "
                                                    "that is read in from the file", metavar="FILE",
-                            default="mountaincar.yaml")
+                            default="maze.yaml")
         args = parser.parse_args()
 
         config = yaml.safe_load(open(args.config))
