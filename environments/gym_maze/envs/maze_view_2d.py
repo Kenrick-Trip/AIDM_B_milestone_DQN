@@ -104,7 +104,7 @@ class MazeView2D:
             if not timestamp:
                 timestamp = str(datetime.now().strftime("%Y%m%d_%H-%M-%S"))
             img_output = self.__view_update_milestones(milestones, mode)
-            pygame.image.save(self.maze_layer, "output_files/milestones" + timestamp + ".png")
+            # pygame.image.save(self.maze_layer, "output_files/milestones" + timestamp + ".png")
             self.__controller_update()
         except Exception as e:
             self.__game_over = True
@@ -195,7 +195,7 @@ class MazeView2D:
             self.__draw_portals()
             self.__draw_robot()
             for v in milestones:
-                self.colour_cell(v, colour=(0, 0, 0), transparency=255)
+                self.colour_cell(v.goal_state, colour=(0, 255, 0), transparency=127)
 
             # update the screen
             self.screen.blit(self.background, (0, 0))

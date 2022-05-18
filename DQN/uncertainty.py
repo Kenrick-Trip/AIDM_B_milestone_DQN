@@ -23,22 +23,30 @@ class CountUncertainty:
         self.count = th.zeros(*([resolution for _ in self.bounds]), dtype=th.long)
         self.scale = scale
         self.eps = 1E-7
+        self.env = env
 
-        self.calculate_bins()
+        self.is_maze = "maze" in self.env.spec.id
 
-    def calculate_bins(self):
-        """Divide the state space into n bins"""
+        if not self.is_maze:
+            self.calculate_bins_mc()
+
+    def calculate_bins_mc(self):
+        """Divide the state space into n bins for mc"""
         bound_sizes = np.array([b-a for a,b in self.bounds])
         self.bin_sizes = bound_sizes / self.resolution
         low_bounds = np.array([bound[0] for bound in self.bounds])
-        self.bin_ends = low_bounds + np.cumsum(np.full(self.resolution, self.bin_sizes[0]))
+        self.bin_ends = low_bounds[0] + np.cumsum(np.full(self.resolution, self.bin_sizes[0]))
         self.bin_begins = self.bin_ends - self.bin_sizes[0]
         self.bin_mids = (self.bin_begins + self.bin_ends) / 2
 
     def state_bin(self, state):
         """ Find the correct bin in 'self.count' for one state. """
-        zipped = zip(state[0][0:len(self.bounds)], self.bounds)
-        return tuple([int((x - l) / (h - l + self.eps) * self.resolution) for x, (l, h) in zipped])
+        cut_state = state[0][0:len(self.bounds)]
+        if not self.is_maze:
+            zipped = zip(cut_state, self.bounds)
+            return tuple([int((x - l) / (h - l + self.eps) * self.resolution) for x, (l, h) in zipped])
+        else:
+            return tuple(cut_state.astype(int))
 
     def observe(self, state, **kwargs):
         """ Add counts for observed 'state's.

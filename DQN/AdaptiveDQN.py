@@ -12,7 +12,7 @@ from plotting.HeatMap import HeatMap
 
 class AdaptiveDQN(DQN):
     def __init__(self, env_wrapper: EnvWrapper, *args, eps_method, plot, eps_zero=1.0, decay_func=np.sqrt,
-                 uncertainty=None, plot_update_interval=10000, **kwargs):
+                 uncertainty=None, plot_update_interval=10000, reset_heat_map_every_plot=True, **kwargs):
         super().__init__(*args, **kwargs)
         self.env_wrapper = env_wrapper
         self.eps_zero = eps_zero
@@ -21,6 +21,7 @@ class AdaptiveDQN(DQN):
         self.plot = plot
         self.uncertainty = uncertainty
         self.plot_update_interval = plot_update_interval
+        self.reset_heat_map_every_plot = reset_heat_map_every_plot
 
         if self.plot == 1:
             self.exploration_array = []
@@ -88,8 +89,13 @@ class AdaptiveDQN(DQN):
         if self._n_calls % self.plot_update_interval == 0:
             if self.plot == 1:
                 self.plot_results()
-                self.heat_map.generate1D()
-                self.heat_map.reset_count()
+
+                if "MountainCar" in self.env_wrapper.spec.id:
+                    self.heat_map.generate1D()
+                if "maze" in self.env_wrapper.spec.id:
+                    self.heat_map.generate2D()
+                if self.reset_heat_map_every_plot:
+                    self.heat_map.reset_count()
 
         if self.plot == 1:
             self.exploration_array = np.append(self.exploration_array, self.exploration_rate)

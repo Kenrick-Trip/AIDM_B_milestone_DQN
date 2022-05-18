@@ -30,16 +30,16 @@ class Runner:
         self.model = AdaptiveDQN(self.env, config["policy"], self.env, eps_method=config["method"], plot=config["plot"],
                                  decay_func=lambda x: np.sqrt(np.sqrt(x)), verbose=1, learning_starts=learning_starts,
                                  seed=config["seed"], uncertainty=self.uncertainty,
-                                 plot_update_interval=config["plot_update_interval"])
+                                 plot_update_interval=config["plot_update_interval"],
+                                 reset_heat_map_every_plot=config["reset_heat_map_every_plot"])
 
     def generate_milestones(self):
         if "maze" in self.config["env"].lower():
-            num_milestones = 4
             milestone_generator = MazeMilestoneGenerator(self.env)
         else:
-            num_milestones = 10
             milestone_generator = MountainCarMilestoneGenerator(self.env)
-        self.milestones = milestone_generator.get_milestones(num_milestones)
+        self.milestones = milestone_generator.get_milestones(self.config["num_milestones"])
+        print(self.milestones)
 
     def train(self):
         self.model.learn(total_timesteps=self.config["trainsteps"])
@@ -65,7 +65,7 @@ class Runner:
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", help="Config file to use. Other settings will override the config "
-                                               "that is read in from the file", metavar="FILE", default="config.yaml")
+                                               "that is read in from the file", metavar="FILE", default="maze.yaml")
     args = parser.parse_args()
 
     config = yaml.safe_load(open(args.config))

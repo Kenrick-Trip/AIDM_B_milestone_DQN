@@ -117,11 +117,11 @@ class MazeEnv(gym.Env):
 
         return self.maze_view.update_shortest_path(shortest_path, mode, timestamp=timestamp)
 
-    def render_milestones(self, m_states, mode="human", close=False, timestamp=None):
+    def render_milestones(self, milestones, mode="human", close=False, timestamp=None):
         if close:
             self.maze_view.quit_game()
 
-        return self.maze_view.update_milestones(m_states, mode, timestamp=timestamp)
+        return self.maze_view.update_milestones(milestones, mode, timestamp=timestamp)
 
     def do_enable_render(self):
         """Enable rendering, start up pygame"""

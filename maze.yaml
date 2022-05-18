@@ -4,7 +4,10 @@ demosteps: 10000
 env: "maze-random-5x5-v0"
 policy: "MlpPolicy"
 method: 1
-plot: 0 # enable = 1, disable = 0
+plot: 1 # enable = 1, disable = 0
+plot_update_interval: 1000
+reset_heat_map_every_plot: false
+num_milestones: 4
 policy_kwargs:
   net_arch: [ 64,64 ]
 uncertainty_kwargs:
