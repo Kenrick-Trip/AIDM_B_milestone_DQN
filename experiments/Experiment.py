@@ -4,6 +4,7 @@ import numpy as np
 import yaml
 from DQN.AdaptiveDQN import AdaptiveDQN
 from DQN.uncertainty import CountUncertainty
+from stable_baselines3.common.logger import configure
 import argparse
 
 
@@ -12,6 +13,7 @@ class Experiment:
         self.num_milestones = num_milestones
         self.results_dir = results_dir
         self.config = config
+        self.logger = configure(self.results_dir, ["log", "csv", "stdout"])
 
     def get_env(self):
         return gym.make(self.config['env'])
@@ -20,6 +22,7 @@ class Experiment:
         raise NotImplementedError("You should implement the wrapper in a subclass!")
 
     def _train(self, model):
+        model.set_logger(self.logger)
         model.learn(total_timesteps=self.config["trainsteps"])
 
     def _demo(self, env, model):
@@ -51,7 +54,8 @@ class Experiment:
         uncertainty = CountUncertainty(env, **self.config[
             'uncertainty_kwargs']) if 'uncertainty_kwargs' in self.config else None
 
-        model = AdaptiveDQN(env, self.config['policy'], env, eps_method=self.config['method'], plot=self.config['plot'],
+        model = AdaptiveDQN(env, self.config['policy'], env, results_folder=self.results_dir,
+                            eps_method=self.config['method'], plot=self.config['plot'],
                             decay_func=lambda x: np.sqrt(np.sqrt(x)), verbose=1, learning_starts=learning_starts,
                             seed=seed,
                             policy_kwargs=self.config['policy_kwargs'], uncertainty=uncertainty)
