@@ -10,10 +10,10 @@ import argparse
 class Experiment:
     def __init__(self, config: dict, results_dir: str):
         """
-
-        :param config:
-        :param results_dir:
-        :param num_milestones:
+        Basic Experiment template, you should extent this class for your own experiment, and
+        implement the abstract method(s).
+        :param config: dictionary containing the (hyper)parameters
+        :param results_dir: directory to save (intermediate) results to
         """
         self.results_dir = results_dir
         self.config = config
