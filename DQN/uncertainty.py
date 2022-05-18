@@ -24,6 +24,17 @@ class CountUncertainty:
         self.scale = scale
         self.eps = 1E-7
 
+        self.calculate_bins()
+
+    def calculate_bins(self):
+        """Divide the state space into n bins"""
+        bound_sizes = np.array([b-a for a,b in self.bounds])
+        bin_sizes = bound_sizes / self.resolution
+        low_bounds = np.array([bound[0] for bound in self.bounds])
+        self.bin_ends = low_bounds + np.cumsum(np.full(self.resolution, bin_sizes[0]))
+        self.bin_begins = self.bin_ends - bin_sizes[0]
+        self.bin_mids = (self.bin_begins + self.bin_ends) / 2
+
     def state_bin(self, state):
         """ Find the correct bin in 'self.count' for one state. """
         zipped = zip(state[0][0:len(self.bounds)], self.bounds)
@@ -39,6 +50,10 @@ class CountUncertainty:
         for s in state:
             b = self.state_bin(s)
             self.count[b] += 1
+
+    def get_visit_count(self, state):
+        bin = self.state_bin([state])
+        return self.count[bin]
 
     def __call__(self, state, **kwargs):
         """ Returns the estimated uncertainty for observing a (minibatch of) state(s) ans Tensor.
