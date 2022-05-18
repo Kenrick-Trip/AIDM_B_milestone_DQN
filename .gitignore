@@ -133,4 +133,6 @@ dmypy.json
 
 environments/output_files
 
-*results/*
+experiments/results
+
+results
