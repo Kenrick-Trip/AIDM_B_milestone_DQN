@@ -5,11 +5,12 @@ import yaml
 from DQN.AdaptiveDQN import AdaptiveDQN
 from DQN.uncertainty import CountUncertainty
 import argparse
-import os
+
 
 class Experiment:
-    def __init__(self, config: dict, num_milestones: int = 10):
+    def __init__(self, config: dict, results_dir: str, num_milestones: int = 10):
         self.num_milestones = num_milestones
+        self.results_dir = results_dir
         self.config = config
 
     def get_env(self):

@@ -18,4 +18,4 @@ if __name__ == '__main__':
     result_dir = "../results/" + datetime.now().strftime("%Y-%m-%d-t-%H:%M:%S")
     os.mkdir(result_dir)
     shutil.copy(config_file, result_dir + "/config.yaml")
-    MazeExperiment(config).main()
+    MazeExperiment(config, result_dir).main()

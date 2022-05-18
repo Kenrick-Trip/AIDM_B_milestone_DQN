@@ -11,5 +11,5 @@ uncertainty_kwargs:
   scale: 1
   state_bounds: null
   resolution: 5
-  first_n_dim: 1
+  first_n_dim: 2
 
