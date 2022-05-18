@@ -7,11 +7,12 @@ from environments.EnvWrapper import EnvWrapper
 import numpy as np
 import matplotlib.pyplot as plt
 
+from plotting.HeatMap import HeatMap
+
 
 class AdaptiveDQN(DQN):
     def __init__(self, env_wrapper: EnvWrapper, *args, eps_method, plot, eps_zero=1.0, decay_func=np.sqrt,
-                 uncertainty=None,
-                 **kwargs):
+                 uncertainty=None, plot_update_interval=10000, **kwargs):
         super().__init__(*args, **kwargs)
         self.env_wrapper = env_wrapper
         self.eps_zero = eps_zero
@@ -19,13 +20,15 @@ class AdaptiveDQN(DQN):
         self.method = eps_method
         self.plot = plot
         self.uncertainty = uncertainty
+        self.plot_update_interval = plot_update_interval
 
         if self.plot == 1:
             self.exploration_array = []
             self.milestone_array = []
             self.reward_array = []
             self.episode_array = []
-            self.fig, self.axis = plt.subplots(2, 2)
+            self.fig, self.axis = plt.subplots(2, 3)
+            self.heat_map = HeatMap(env_wrapper, uncertainty, axis=self.axis[0, 2])
             plt.ion()
             plt.show()
 
@@ -75,23 +78,24 @@ class AdaptiveDQN(DQN):
             self._n_calls += 1
             if self._n_calls % self.target_update_interval == 0:
                 polyak_update(self.q_net.parameters(), self.q_net_target.parameters(), self.tau)
-                if self.plot == 1:
-                    self.plot_results()
-
-            if self.plot == 1:
-                self.exploration_array = np.append(self.exploration_array, self.exploration_rate)
-                self.milestone_array = np.append(self.milestone_array, self.env_wrapper.get_curr_milestones())
-                self.reward_array = np.append(self.reward_array, self.env_wrapper.reward)
-                self.episode_array = np.append(self.episode_array, self._episode_num)
 
             self.exploration_rate = self._get_exploration_rate()
             self.logger.record("rollout/exploration_rate", self.exploration_rate)
 
-            # Why is this return true here?
-            return True
         else:
             super()._on_step()
-            return True
+
+        if self._n_calls % self.plot_update_interval == 0:
+            if self.plot == 1:
+                self.plot_results()
+                self.heat_map.generate1D()
+                self.heat_map.reset_count()
+
+        if self.plot == 1:
+            self.exploration_array = np.append(self.exploration_array, self.exploration_rate)
+            self.milestone_array = np.append(self.milestone_array, self.env_wrapper.get_curr_milestones())
+            self.reward_array = np.append(self.reward_array, self.env_wrapper.reward)
+            self.episode_array = np.append(self.episode_array, self._episode_num)
 
     def _store_transition(self, replay_buffer, buffer_action, new_obs, reward, dones, infos) -> None:
         if self.uncertainty is not None:
