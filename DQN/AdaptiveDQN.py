@@ -6,12 +6,13 @@ from stable_baselines3.common.logger import Figure
 from environments.EnvWrapper import EnvWrapper
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 from plotting.HeatMap import HeatMap
 
 
 class AdaptiveDQN(DQN):
-    def __init__(self, env_wrapper: EnvWrapper, *args, eps_method, plot, eps_zero=1.0, decay_func=np.sqrt,
+    def __init__(self, env_wrapper: EnvWrapper, *args, results_folder, eps_method, plot, eps_zero=1.0, decay_func=np.sqrt,
                  uncertainty=None, plot_update_interval=10000, reset_heat_map_every_plot=True, **kwargs):
         super().__init__(*args, **kwargs)
         self.env_wrapper = env_wrapper
@@ -22,6 +23,7 @@ class AdaptiveDQN(DQN):
         self.uncertainty = uncertainty
         self.plot_update_interval = plot_update_interval
         self.reset_heat_map_every_plot = reset_heat_map_every_plot
+        self.path_to_results = results_folder
 
         if self.plot == 1:
             self.exploration_array = []
@@ -53,7 +55,13 @@ class AdaptiveDQN(DQN):
         self.logger.record("trajectory/figure", Figure(self.fig, close=True), exclude=("stdout", "log", "json", "csv"))
         plt.tight_layout()
         plt.draw()
-        plt.pause(0.2)
+        plt.pause(0.3)
+
+        if self._n_calls > self.num_timesteps - self.plot_update_interval/2:
+            file_path = "./{}/plot_results.pdf".format(self.path_to_results)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+            plt.savefig(file_path)
 
     def _get_exploration_rate(self) -> float:
         """

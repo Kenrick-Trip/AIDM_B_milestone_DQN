@@ -132,3 +132,7 @@ dmypy.json
 .idea
 
 environments/output_files
+
+experiments/results
+
+results

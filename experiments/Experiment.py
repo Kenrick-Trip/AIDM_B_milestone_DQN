@@ -1,31 +1,24 @@
-import sys
 import time
-
 import gym
 import numpy as np
-from stable_baselines3 import DQN
 import yaml
-
-from stable_baselines3.common.logger import make_output_format
 from DQN.AdaptiveDQN import AdaptiveDQN
-from environments.EnvWrapper import EnvWrapper
-from environments.MazeMilestoneGenerator import MountainCarMilestoneGenerator, MazeMilestoneGenerator
-from environments.Milestone import PassingMilestone, ExactMilestone
-from environments.gym_maze import *
-from environments.gym_maze.envs import MazeEnv
 from DQN.uncertainty import CountUncertainty
+from stable_baselines3.common.logger import configure
 import argparse
 
 
 class Experiment:
-    def __init__(self, num_milestones: int = 10, file:str ="maze.yaml"):
-        self.num_milestones = num_milestones
-        self.config = self._read_yaml(file) if file != "parse" else self.parse_args()
-        print("Starting Experiment.. config ", file)
-
-    def _read_yaml(self, file: str):
-        with open(file, "r") as f:
-            return yaml.safe_load(f)
+    def __init__(self, config: dict, results_dir: str):
+        """
+        Basic Experiment template, you should extent this class for your own experiment, and
+        implement the abstract method(s).
+        :param config: dictionary containing the (hyper)parameters
+        :param results_dir: directory to save (intermediate) results to
+        """
+        self.results_dir = results_dir
+        self.config = config
+        self.logger = configure(self.results_dir, ["log", "csv", "stdout"])
 
     def get_env(self):
         return gym.make(self.config['env'])
@@ -34,6 +27,7 @@ class Experiment:
         raise NotImplementedError("You should implement the wrapper in a subclass!")
 
     def _train(self, model):
+        model.set_logger(self.logger)
         model.learn(total_timesteps=self.config["trainsteps"])
 
     def _demo(self, env, model):
@@ -65,7 +59,8 @@ class Experiment:
         uncertainty = CountUncertainty(env, **self.config[
             'uncertainty_kwargs']) if 'uncertainty_kwargs' in self.config else None
 
-        model = AdaptiveDQN(env, self.config['policy'], env, eps_method=self.config['method'], plot=self.config['plot'],
+        model = AdaptiveDQN(env, self.config['policy'], env, results_folder=self.results_dir,
+                            eps_method=self.config['method'], plot=self.config['plot'],
                             decay_func=lambda x: np.sqrt(np.sqrt(x)), verbose=1, learning_starts=learning_starts,
                             seed=seed,
                             policy_kwargs=self.config['policy_kwargs'], uncertainty=uncertainty)
@@ -73,12 +68,22 @@ class Experiment:
         self._train(model)
         self._demo(env, model)
 
-    def parse_args(self):
+    @staticmethod
+    def _read_yaml(file: str, absolute=False):
+        if not absolute:
+            file = __file__ + "/" + file
+            print(file)
+        with open(file, "r") as f:
+            return yaml.safe_load(f)
+
+    @staticmethod
+    def get_config_from_args(default_file="maze.yaml"):
         parser = argparse.ArgumentParser()
         parser.add_argument("-c", "--config", help="Config file to use. Other settings will override the config "
                                                    "that is read in from the file", metavar="FILE",
-                            default="maze.yaml")
+                            default=default_file)
         args = parser.parse_args()
+        config = Experiment._read_yaml(args.config, absolute=True if args.config != default_file else True)
 
-        config = yaml.safe_load(open(args.config))
-        return config
+        print("Using config file ", args.config, "!")
+        return config, args.config

@@ -1,8 +1,7 @@
 seed: 123
-trainsteps: 20000
-demosteps: 1000
-env: "maze-random-5x5-v0"
-num_milestones: 4
+trainsteps: 40000
+demosteps: 10
+env: "MountainCar-v0"
 policy: "MlpPolicy"
 method: 1
 plot: 1 # enable = 1, disable = 0
@@ -12,4 +11,5 @@ uncertainty_kwargs:
   scale: 1
   state_bounds: null
   resolution: 5
-  first_n_dim: 2
+  first_n_dim: 1
+
