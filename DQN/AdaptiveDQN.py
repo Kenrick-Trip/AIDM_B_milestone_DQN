@@ -54,7 +54,7 @@ class AdaptiveDQN(DQN):
         self.logger.record("trajectory/figure", Figure(self.fig, close=True), exclude=("stdout", "log", "json", "csv"))
         plt.tight_layout()
         plt.draw()
-        plt.pause(0.2)
+        plt.pause(0.3)
 
         if self._n_calls > self.num_timesteps - self.plot_update_interval/2:
             file_path = "./{}/plot_results.pdf".format(self.path_to_results)
