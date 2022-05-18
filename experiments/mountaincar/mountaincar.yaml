@@ -2,6 +2,7 @@ seed: 123
 trainsteps: 40000
 demosteps: 10
 env: "MountainCar-v0"
+num_milestones: 10
 policy: "MlpPolicy"
 method: 1
 plot: 1 # enable = 1, disable = 0
@@ -12,4 +13,3 @@ uncertainty_kwargs:
   state_bounds: null
   resolution: 5
   first_n_dim: 1
-
