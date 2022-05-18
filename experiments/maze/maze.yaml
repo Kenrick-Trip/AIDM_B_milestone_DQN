@@ -1,6 +1,6 @@
 seed: 123
-trainsteps: 20
-demosteps: 1000
+trainsteps: 30000
+demosteps: 40
 env: "maze-random-5x5-v0"
 num_milestones: 4
 policy: "MlpPolicy"
