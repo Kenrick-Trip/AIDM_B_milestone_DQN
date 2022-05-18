@@ -65,7 +65,7 @@ class Runner:
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", help="Config file to use. Other settings will override the config "
-                                               "that is read in from the file", metavar="FILE", default="maze.yaml")
+                                               "that is read in from the file", metavar="FILE", default="config.yaml")
     args = parser.parse_args()
 
     config = yaml.safe_load(open(args.config))
