@@ -1,6 +1,6 @@
 seed: 123
-trainsteps: 10000
-demosteps: 10000
+trainsteps: 100000
+demosteps: 10
 env: "MountainCar-v0"
 policy: "MlpPolicy"
 method: 1
