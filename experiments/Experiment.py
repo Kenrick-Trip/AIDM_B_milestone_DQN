@@ -1,31 +1,16 @@
-import sys
 import time
-
 import gym
 import numpy as np
-from stable_baselines3 import DQN
 import yaml
-
-from stable_baselines3.common.logger import make_output_format
 from DQN.AdaptiveDQN import AdaptiveDQN
-from environments.EnvWrapper import EnvWrapper
-from environments.MazeMilestoneGenerator import MountainCarMilestoneGenerator, MazeMilestoneGenerator
-from environments.Milestone import PassingMilestone, ExactMilestone
-from environments.gym_maze import *
-from environments.gym_maze.envs import MazeEnv
 from DQN.uncertainty import CountUncertainty
 import argparse
-
+import os
 
 class Experiment:
-    def __init__(self, num_milestones: int = 10, file:str ="maze.yaml"):
+    def __init__(self, config: dict, num_milestones: int = 10):
         self.num_milestones = num_milestones
-        self.config = self._read_yaml(file) if file != "parse" else self.parse_args()
-        print("Starting Experiment.. config ", file)
-
-    def _read_yaml(self, file: str):
-        with open(file, "r") as f:
-            return yaml.safe_load(f)
+        self.config = config
 
     def get_env(self):
         return gym.make(self.config['env'])
@@ -73,12 +58,22 @@ class Experiment:
         self._train(model)
         self._demo(env, model)
 
-    def parse_args(self):
+    @staticmethod
+    def _read_yaml(file: str, absolute=False):
+        if not absolute:
+            file = __file__ + "/" + file
+            print(file)
+        with open(file, "r") as f:
+            return yaml.safe_load(f)
+
+    @staticmethod
+    def get_config_from_args(default_file="maze.yaml"):
         parser = argparse.ArgumentParser()
         parser.add_argument("-c", "--config", help="Config file to use. Other settings will override the config "
                                                    "that is read in from the file", metavar="FILE",
-                            default="maze.yaml")
+                            default=default_file)
         args = parser.parse_args()
+        config = Experiment._read_yaml(args.config, absolute=True if args.config != default_file else True)
 
-        config = yaml.safe_load(open(args.config))
-        return config
+        print("Using config file ", args.config, "!")
+        return config, args.config
