@@ -109,6 +109,13 @@ class EnvWrapper:
             obs = np.append(obs, self.milestones_reached.astype(np.float32))
         return obs
 
+    def total_reset(self):
+        obs = self.reset()
+        self.cached_milestones_reached = None
+        self.reset_counter()
+        self._episode_log = []
+        return obs
+
     # Propagate all other functions to the environment
     def render(self, mode="human"):
         if hasattr(self.env, "render_milestones"):

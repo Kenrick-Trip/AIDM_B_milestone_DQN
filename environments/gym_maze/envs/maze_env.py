@@ -89,7 +89,6 @@ class MazeEnv(gym.Env):
             done = False
 
         self.state = self.maze_view.robot
-
         info = {}
 
         return self.state, reward, done, info

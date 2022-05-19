@@ -27,6 +27,7 @@ class Experiment:
         raise NotImplementedError("You should implement the wrapper in a subclass!")
 
     def _train(self, model):
+        model.env_wrapper.total_reset()
         model.set_logger(self.logger)
         model.learn(total_timesteps=self.config["trainsteps"])
 

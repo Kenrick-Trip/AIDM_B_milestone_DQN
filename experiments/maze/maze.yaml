@@ -2,7 +2,7 @@ seed: 123
 trainsteps: 100000
 demosteps: 100
 env: "maze-sample-10x10-v0"
-num_milestones: 12
+num_milestones: 4
 policy: "MlpPolicy"
 method: 1
 plot: 1 # enable = 1, disable = 0

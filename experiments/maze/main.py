@@ -10,6 +10,7 @@ class MazeExperiment(Experiment):
     def get_env_wrapper(self, env):
         milestone_generator = MazeMilestoneGenerator(env)
         milestones = milestone_generator.get_milestones(self.config["num_milestones"])
+        print(milestones)
         return EnvWrapper(env, milestones)
 
 

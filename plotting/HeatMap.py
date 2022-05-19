@@ -20,8 +20,8 @@ class HeatMap:
     def generate2D(self):
         if "maze" not in self.env.spec.id:
             raise Exception("2d heatmap only supported for maze")
-        data = self.uncertainty.count - self.last_count
-        self.axis.imshow(data.numpy(), interpolation='nearest')
+        data = (self.uncertainty.count - self.last_count).numpy().T
+        self.axis.imshow(data.T, interpolation='nearest')
 
     def reset_count(self):
         self.last_count = np.copy(self.uncertainty.count)

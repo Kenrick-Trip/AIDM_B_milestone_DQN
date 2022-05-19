@@ -90,7 +90,7 @@ class MazeMilestoneGenerator(MilestoneGenerator):
                 milestones.append(ExactMilestone(reward=1, goal_state=state))
             if len(milestones) == n:
                 break
-        return milestones
+        return list(reversed(milestones))
 
 
 class MountainCarMilestoneGenerator(MilestoneGenerator):
