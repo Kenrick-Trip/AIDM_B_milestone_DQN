@@ -15,7 +15,7 @@ class MazeExperiment(Experiment):
 
 if __name__ == '__main__':
     config, config_file = MazeExperiment.get_config_from_args(default_file="maze.yaml")
-    result_dir = "./results/" + datetime.now().strftime("%Y-%m-%d-t-%H:%M:%S")
+    result_dir = "./results/" + datetime.now().strftime("%Y-%m-%d-t-%H%M%S")
     os.makedirs(result_dir)
     shutil.copy(config_file, result_dir + "/config.yaml")
     MazeExperiment(config, result_dir).main()
