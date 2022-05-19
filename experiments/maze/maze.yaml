@@ -1,12 +1,12 @@
 seed: 123
-trainsteps: 100000
-demosteps: 100
+trainsteps: 200000
+demosteps: 1000
 env: "maze-sample-10x10-v0"
-num_milestones: 4
+num_milestones: 5
 policy: "MlpPolicy"
 method: 1
 plot: 1 # enable = 1, disable = 0
-plot_update_interval: 5000
+plot_update_interval: 10000
 reset_heat_map_every_plot: false
 policy_kwargs:
   net_arch: [ 64,64 ]
