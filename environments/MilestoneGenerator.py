@@ -106,6 +106,6 @@ class MountainCarMilestoneGenerator(MilestoneGenerator):
         """
         spacing = (end_position - begin_position) / (n - 1)
         milestone_locations = [begin_position + i * spacing for i in range(n)]
-        milestones = [PassingMilestone(goal_state=np.array([loc, np.nan]), reward=(i+1)*2)
+        milestones = [PassingMilestone(goal_state=np.array([loc, np.nan]), reward=20)
                       for i, loc in enumerate(milestone_locations)]
         return milestones

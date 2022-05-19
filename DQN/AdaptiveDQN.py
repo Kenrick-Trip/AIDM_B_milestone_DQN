@@ -30,7 +30,7 @@ class AdaptiveDQN(DQN):
             self.milestone_array = []
             self.reward_array = []
             self.episode_array = []
-            self.fig, self.axis = plt.subplots(2, 3)
+            self.fig, self.axis = plt.subplots(2, 3, figsize=(12, 10))
             self.heat_map = HeatMap(env_wrapper, uncertainty, axis=self.axis[0, 2])
             plt.ion()
             plt.show()
@@ -43,14 +43,23 @@ class AdaptiveDQN(DQN):
         return self.eps_zero / (self.decay_func(self.env_wrapper.counter) + 1)
 
     def plot_results(self):
+        milestone_array = [ep["num_milestones_reached"] for ep in self.env_wrapper._episode_log]
+        episode_reward_array = [ep["episode_rewards"] for ep in self.env_wrapper._episode_log]
+        total_reward_array = [ep["total_rewards"] for ep in self.env_wrapper._episode_log]
         self.axis[0, 0].plot(self.exploration_array, 'g')
         self.axis[0, 0].set_title('Exploration rates')
-        self.axis[0, 1].plot(self.milestone_array, 'g')
+        self.axis[0, 0].set_xlabel("Timestep")
+        self.axis[0, 1].plot(milestone_array, 'g')
         self.axis[0, 1].set_title('Reached milestones')
-        self.axis[1, 0].plot(self.reward_array, 'g')
+        self.axis[0, 1].set_xlabel("Episode")
+        self.axis[1, 0].plot(episode_reward_array, 'g')
         self.axis[1, 0].set_title('Received reward')
+        self.axis[1, 0].set_xlabel("Episode")
         self.axis[1, 1].plot(self.episode_array, 'g')
         self.axis[1, 1].set_title('Elapsed episodes')
+        self.axis[1, 2].plot(total_reward_array, 'g')
+        self.axis[1, 2].set_title('Total reward (inc. milestones)')
+        self.axis[1, 2].set_xlabel("Episode")
 
         self.logger.record("trajectory/figure", Figure(self.fig, close=True), exclude=("stdout", "log", "json", "csv"))
         plt.tight_layout()
@@ -110,6 +119,13 @@ class AdaptiveDQN(DQN):
             self.milestone_array = np.append(self.milestone_array, self.env_wrapper.get_curr_milestones())
             self.reward_array = np.append(self.reward_array, self.env_wrapper.reward)
             self.episode_array = np.append(self.episode_array, self._episode_num)
+
+    #     if self.is_new_episode():
+    #         print(f"new episode: {self._episode_num}")
+    #         print(self.ep_info_buffer)
+    #
+    # def is_new_episode(self):
+    #     return len(self.episode_array) > 2 and self.episode_array[-1] - self.episode_array[-2] >= 1
 
     def _store_transition(self, replay_buffer, buffer_action, new_obs, reward, dones, infos) -> None:
         if self.uncertainty is not None:

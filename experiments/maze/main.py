@@ -1,6 +1,6 @@
 from experiments.Experiment import Experiment
 from environments.EnvWrapper import EnvWrapper
-from environments.MazeMilestoneGenerator import MazeMilestoneGenerator
+from environments.MilestoneGenerator import MazeMilestoneGenerator
 from datetime import datetime
 import os
 import shutil

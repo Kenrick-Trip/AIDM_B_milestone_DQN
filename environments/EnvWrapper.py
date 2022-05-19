@@ -9,14 +9,17 @@ from environments.Milestone import Milestone
 
 class EnvWrapper:
     """Wrapper class for a Gym environment that enables the milestone system."""
-
-    def __init__(self, env: gym.Env, milestones: List[Milestone] = None, reward=0):
+    def __init__(self, env: gym.Env, milestones: List[Milestone] = None):
         self.env = env
         self.milestones = milestones if milestones else []
         self.n_milestones = len(milestones)
-        self.reward = reward
+        self.reward = 0
         self.cached_milestones_reached = None
         self.counter = np.zeros(self.n_milestones, dtype=int)
+
+        self._episode_rewards = np.array([])
+        self._total_rewards = np.array([])
+        self._episode_log = []
 
         if self.uses_milestones:
             self.milestones_reached = np.zeros(self.n_milestones, dtype=np.bool)
@@ -33,7 +36,7 @@ class EnvWrapper:
 
     def step(self, action):
         obs, reward, done, info = self.env.step(action=action)
-
+        self._episode_rewards = np.append(self._episode_rewards, reward)
         if self.uses_milestones:
             # Update the milestones if we are working with the milestone system
             extra_reward = self.update_milestones(obs)
@@ -42,7 +45,7 @@ class EnvWrapper:
 
             # self.update_counter(self.get_curr_milestones())
             obs = np.append(obs, self.milestones_reached.astype(np.float32))
-
+        self._total_rewards = np.append(self._total_rewards, reward)
         return obs, reward, done, info
 
     def update_milestones(self, state: NDArray) -> float:
@@ -85,8 +88,21 @@ class EnvWrapper:
     def reset_counter(self):
         self.counter = np.zeros(self.n_milestones, dtype=int)
 
+    def log_latest(self):
+        if len(self._episode_rewards) == 0:
+            return
+
+        self._episode_log.append({
+            "num_milestones_reached": self.milestones_reached.sum(),
+            "episode_rewards": self._episode_rewards.sum(),
+            "total_rewards": self._total_rewards.sum()
+        })
+
     def reset(self):
+        self.log_latest()
         obs = self.env.reset()
+        self._episode_rewards = np.array([])
+        self._total_rewards = np.array([])
         self.counter[0] += 1
         if self.uses_milestones:
             self.milestones_reached = np.zeros(self.n_milestones, dtype=np.bool)

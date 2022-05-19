@@ -9,7 +9,7 @@ import yaml
 from DQN.AdaptiveDQN import AdaptiveDQN
 from DQN.uncertainty import CountUncertainty
 from environments.EnvWrapper import EnvWrapper
-from environments.MazeMilestoneGenerator import MazeMilestoneGenerator, MountainCarMilestoneGenerator
+from environments.MilestoneGenerator import MazeMilestoneGenerator, MountainCarMilestoneGenerator
 
 
 class Runner:

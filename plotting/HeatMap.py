@@ -12,7 +12,10 @@ class HeatMap:
     def generate1D(self):
         if "MountainCar" not in self.env.spec.id:
             raise Exception("1d heatmap only supported for MountainCar")
-        self.axis.bar(self.uncertainty.bin_mids, self.uncertainty.count - self.last_count, width=self.uncertainty.bin_sizes[0], color='g')
+        data = self.uncertainty.count - self.last_count
+        data = data / max(data)
+        self.axis.bar(self.uncertainty.bin_mids, data, width=self.uncertainty.bin_sizes[0], color='g')
+        self.axis.set_xlabel("Position")
 
     def generate2D(self):
         if "maze" not in self.env.spec.id:

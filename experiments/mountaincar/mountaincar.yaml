@@ -1,11 +1,13 @@
 seed: 123
-trainsteps: 40000
+trainsteps: 400000
 demosteps: 10
 env: "MountainCar-v0"
 num_milestones: 10
 policy: "MlpPolicy"
 method: 1
 plot: 1 # enable = 1, disable = 0
+plot_update_interval: 1000
+reset_heat_map_every_plot: true
 policy_kwargs:
   net_arch: [ 64,64 ]
 uncertainty_kwargs:

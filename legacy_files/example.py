@@ -9,7 +9,7 @@ import yaml
 from stable_baselines3.common.logger import make_output_format
 from DQN.AdaptiveDQN import AdaptiveDQN
 from environments.EnvWrapper import EnvWrapper
-from environments.MazeMilestoneGenerator import MountainCarMilestoneGenerator, MazeMilestoneGenerator
+from environments.MilestoneGenerator import MountainCarMilestoneGenerator, MazeMilestoneGenerator
 from environments.Milestone import PassingMilestone, ExactMilestone
 from environments.gym_maze import *
 from environments.gym_maze.envs import MazeEnv

@@ -62,7 +62,8 @@ class Experiment:
         model = AdaptiveDQN(env, self.config['policy'], env, results_folder=self.results_dir,
                             eps_method=self.config['method'], plot=self.config['plot'],
                             decay_func=lambda x: np.sqrt(np.sqrt(x)), verbose=1, learning_starts=learning_starts,
-                            seed=seed,
+                            seed=seed, plot_update_interval=self.config["plot_update_interval"],
+                            reset_heat_map_every_plot=self.config["reset_heat_map_every_plot"],
                             policy_kwargs=self.config['policy_kwargs'], uncertainty=uncertainty)
 
         self._train(model)
