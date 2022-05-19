@@ -23,7 +23,7 @@ register(
 register(
     id='maze-sample-10x10-v0',
     entry_point='environments.gym_maze.envs:MazeEnvSample10x10',
-    max_episode_steps=10000,
+    max_episode_steps=5000,
 )
 
 register(

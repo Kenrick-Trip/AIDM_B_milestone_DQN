@@ -24,6 +24,7 @@ class CountUncertainty:
         self.scale = scale
         self.eps = 1E-7
         self.env = env
+        self.first_n_dim = first_n_dim
 
         self.is_maze = "maze" in self.env.spec.id
 
@@ -51,13 +52,18 @@ class CountUncertainty:
     def observe(self, state, **kwargs):
         """ Add counts for observed 'state's.
             'state' can be either a Tuple, List, 1d Tensor or 2d Tensor (1d Tensors stacked in dim=0). """
-        if isinstance(state, th.Tensor):
-            if len(state.shape) == 1: state.unsqueeze_(dim=0)
+
+        if self.is_maze:
+            state = tuple(state[0].astype(int)[:self.first_n_dim])
+            self.count[state] += 1
         else:
-            state = [state]
-        for s in state:
-            b = self.state_bin(s)
-            self.count[b] += 1
+            if isinstance(state, th.Tensor):
+                if len(state.shape) == 1: state.unsqueeze_(dim=0)
+            else:
+                state = [state]
+            for s in state:
+                b = self.state_bin(s)
+                self.count[b] += 1
 
     def get_visit_count(self, state):
         bin = self.state_bin([state])

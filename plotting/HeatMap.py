@@ -7,7 +7,7 @@ class HeatMap:
         self.env = env
         self.uncertainty = uncertainty
         self.axis = axis
-        self.last_count = np.zeros(self.uncertainty.count.shape)
+        self.last_count = np.zeros(self.uncertainty.count.shape, dtype=int)
 
     def generate1D(self):
         if "MountainCar" not in self.env.spec.id:
@@ -21,7 +21,7 @@ class HeatMap:
         if "maze" not in self.env.spec.id:
             raise Exception("2d heatmap only supported for maze")
         data = self.uncertainty.count - self.last_count
-        self.axis.imshow(data.T, interpolation='nearest', cmap="summer")
+        self.axis.imshow(data.numpy(), interpolation='nearest')
 
     def reset_count(self):
         self.last_count = np.copy(self.uncertainty.count)

@@ -46,18 +46,19 @@ class AdaptiveDQN(DQN):
         milestone_array = [ep["num_milestones_reached"] for ep in self.env_wrapper._episode_log]
         episode_reward_array = [ep["episode_rewards"] for ep in self.env_wrapper._episode_log]
         total_reward_array = [ep["total_rewards"] for ep in self.env_wrapper._episode_log]
+        episode_numbers = np.arange(1, len(episode_reward_array) + 1)
         self.axis[0, 0].plot(self.exploration_array, 'g')
         self.axis[0, 0].set_title('Exploration rates')
         self.axis[0, 0].set_xlabel("Timestep")
-        self.axis[0, 1].plot(milestone_array, 'g')
+        self.axis[0, 1].plot(episode_numbers, milestone_array, 'g')
         self.axis[0, 1].set_title('Reached milestones')
         self.axis[0, 1].set_xlabel("Episode")
-        self.axis[1, 0].plot(episode_reward_array, 'g')
+        self.axis[1, 0].plot(episode_numbers, episode_reward_array, 'g')
         self.axis[1, 0].set_title('Received reward')
         self.axis[1, 0].set_xlabel("Episode")
         self.axis[1, 1].plot(self.episode_array, 'g')
         self.axis[1, 1].set_title('Elapsed episodes')
-        self.axis[1, 2].plot(total_reward_array, 'g')
+        self.axis[1, 2].plot(episode_numbers, total_reward_array, 'g')
         self.axis[1, 2].set_title('Total reward (inc. milestones)')
         self.axis[1, 2].set_xlabel("Episode")
 

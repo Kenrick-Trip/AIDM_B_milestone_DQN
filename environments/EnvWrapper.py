@@ -93,7 +93,7 @@ class EnvWrapper:
             return
 
         self._episode_log.append({
-            "num_milestones_reached": self.milestones_reached.sum(),
+            "num_milestones_reached": int(self.milestones_reached.sum()),
             "episode_rewards": self._episode_rewards.sum(),
             "total_rewards": self._total_rewards.sum()
         })
