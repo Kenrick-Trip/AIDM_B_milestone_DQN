@@ -1,3 +1,5 @@
+from enum import Enum
+
 from DQN.uncertainty import CountUncertainty
 from stable_baselines3 import DQN
 from stable_baselines3.common.utils import polyak_update
@@ -11,21 +13,30 @@ import os
 from plotting.HeatMap import HeatMap
 
 
+class ExplorationMethod(str, Enum):
+    TRADITIONAL = "traditional"
+    TRADITIONAL_WITH_MILESTONES = "traditional_milestones"
+    ADAPTIVE_1 = "adaptive1"
+    ADAPTIVE_2 = "adaptive2"
+    DEEP_EXPLORATION = "deep_exploration"
+
+
 class AdaptiveDQN(DQN):
-    def __init__(self, env_wrapper: EnvWrapper, *args, results_folder, eps_method, plot, eps_zero=1.0, decay_func=np.sqrt,
+    def __init__(self, env_wrapper: EnvWrapper, *args, results_folder, exploration_method: ExplorationMethod, plot, eps_zero=1.0,
+                 decay_func=np.sqrt,
                  uncertainty=None, plot_update_interval=10000, reset_heat_map_every_plot=True, **kwargs):
         super().__init__(*args, **kwargs)
         self.env_wrapper = env_wrapper
         self.eps_zero = eps_zero
         self.decay_func = decay_func
-        self.method = eps_method
+        self.exploration_method = exploration_method
         self.plot = plot
         self.uncertainty = uncertainty
         self.plot_update_interval = plot_update_interval
         self.reset_heat_map_every_plot = reset_heat_map_every_plot
         self.path_to_results = results_folder
 
-        if self.plot == 1:
+        if self.plot["enabled"]:
             self.exploration_array = []
             self.milestone_array = []
             self.reward_array = []
@@ -67,7 +78,7 @@ class AdaptiveDQN(DQN):
         plt.draw()
         plt.pause(0.3)
 
-        if self._n_calls > self.num_timesteps - self.plot_update_interval/2:
+        if self._n_calls % self.plot["save_interval"] == 0:
             file_path = "./{}/plot_results.pdf".format(self.path_to_results)
             if os.path.isfile(file_path):
                 os.remove(file_path)
@@ -82,14 +93,15 @@ class AdaptiveDQN(DQN):
         eps = self.get_eps()
         curr_milestone = self.env_wrapper.get_curr_milestones()
 
-        if self.method == 1:
+        if self.exploration_method == ExplorationMethod.ADAPTIVE_1:
             self.env_wrapper.update_counter(curr_milestone)
             return eps[curr_milestone]
-        elif self.method == 2:
+        elif self.exploration_method == ExplorationMethod.ADAPTIVE_2:
             self.env_wrapper.update_counter(curr_milestone)
             return eps[curr_milestone + 1]
         else:
-            raise ValueError("ERROR: epsilon selection method is not valid, must be 1 or 2")
+            # If exploration method is not an adaptive method, we just use the regular linear decay
+            return self.exploration_schedule(self._current_progress_remaining)
 
     def _on_step(self):
         """Overwrite _on_step method from DQN class"""
@@ -104,18 +116,17 @@ class AdaptiveDQN(DQN):
         else:
             super()._on_step()
 
-        if self._n_calls % self.plot_update_interval == 0:
-            if self.plot == 1:
-                self.plot_results()
+        if self.plot["enabled"] and self._n_calls % self.plot["update_interval"] == 0:
+            self.plot_results()
 
-                if "MountainCar" in self.env_wrapper.spec.id:
-                    self.heat_map.generate1D()
-                if "maze" in self.env_wrapper.spec.id:
-                    self.heat_map.generate2D()
-                if self.reset_heat_map_every_plot:
-                    self.heat_map.reset_count()
+            if "MountainCar" in self.env_wrapper.spec.id:
+                self.heat_map.generate1D()
+            if "maze" in self.env_wrapper.spec.id:
+                self.heat_map.generate2D()
+            if self.reset_heat_map_every_plot:
+                self.heat_map.reset_count()
 
-        if self.plot == 1:
+        if self.plot["enabled"]:
             self.exploration_array = np.append(self.exploration_array, self.exploration_rate)
             self.milestone_array = np.append(self.milestone_array, self.env_wrapper.get_curr_milestones())
             self.reward_array = np.append(self.reward_array, self.env_wrapper.reward)

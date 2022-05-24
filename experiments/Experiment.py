@@ -2,10 +2,12 @@ import time
 import gym
 import numpy as np
 import yaml
-from DQN.AdaptiveDQN import AdaptiveDQN
+from DQN.AdaptiveDQN import AdaptiveDQN, ExplorationMethod
 from DQN.uncertainty import CountUncertainty
 from stable_baselines3.common.logger import configure
 import argparse
+
+from environments.EnvWrapper import EnvWrapper
 
 
 class Experiment:
@@ -56,13 +58,18 @@ class Experiment:
         # Start learning from the 0th timestep
         learning_starts = 0
 
-        env = self.get_env_wrapper(self.get_env())
+        exploration_method = ExplorationMethod(self.config['exploration_method'])
+        if exploration_method in [ExplorationMethod.TRADITIONAL, ExplorationMethod.DEEP_EXPLORATION]:
+            # If we're doing traditional epsilon greedy or deep exploration we don't need milestones
+            env = EnvWrapper(self.get_env(), [])
+        else:
+            env = self.get_env_wrapper(self.get_env())
         uncertainty = CountUncertainty(env, **self.config[
             'uncertainty_kwargs']) if 'uncertainty_kwargs' in self.config else None
 
         model = AdaptiveDQN(env, self.config['policy'], env, results_folder=self.results_dir,
-                            eps_method=self.config['method'], plot=self.config['plot'],
-                            decay_func=lambda x: np.sqrt(np.sqrt(x)), verbose=1, learning_starts=learning_starts,
+                            exploration_method=exploration_method, plot=self.config['plot'],
+                            decay_func=lambda x: np.sqrt(x), verbose=1, learning_starts=learning_starts,
                             seed=seed, plot_update_interval=self.config["plot_update_interval"],
                             reset_heat_map_every_plot=self.config["reset_heat_map_every_plot"],
                             policy_kwargs=self.config['policy_kwargs'], uncertainty=uncertainty)

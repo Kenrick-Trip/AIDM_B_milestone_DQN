@@ -71,6 +71,8 @@ class EnvWrapper:
         Returns the current milestone i.e. index of last boolean true in reached milestones
         :return: integer (index)
         """
+        if not self.uses_milestones:
+            return 0
         indexes = np.where(self.milestones_reached)[0]
         return indexes[-1] if len(indexes) > 0 else 0
 
@@ -93,7 +95,7 @@ class EnvWrapper:
             return
 
         self._episode_log.append({
-            "num_milestones_reached": int(self.milestones_reached.sum()),
+            "num_milestones_reached": int(self.milestones_reached.sum()) if self.uses_milestones else 0,
             "episode_rewards": self._episode_rewards.sum(),
             "total_rewards": self._total_rewards.sum()
         })
@@ -103,8 +105,8 @@ class EnvWrapper:
         obs = self.env.reset()
         self._episode_rewards = np.array([])
         self._total_rewards = np.array([])
-        self.counter[0] += 1
         if self.uses_milestones:
+            self.counter[0] += 1
             self.milestones_reached = np.zeros(self.n_milestones, dtype=np.bool)
             obs = np.append(obs, self.milestones_reached.astype(np.float32))
         return obs
