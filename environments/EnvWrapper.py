@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 import gym
 import numpy as np
@@ -14,8 +14,10 @@ class EnvWrapper:
         self.milestones = milestones if milestones else []
         self.n_milestones = len(milestones)
         self.reward = 0
-        self.cached_milestones_reached = None
-        self.counter = np.zeros(self.n_milestones, dtype=int)
+
+        # Counter keeps track of initial state as well
+        self.counter = None
+        self.reset_counter()
 
         self._episode_rewards = np.array([])
         self._total_rewards = np.array([])
@@ -42,8 +44,6 @@ class EnvWrapper:
             extra_reward = self.update_milestones(obs)
             reward += extra_reward
             self.reward = reward
-
-            # self.update_counter(self.get_curr_milestones())
             obs = np.append(obs, self.milestones_reached.astype(np.float32))
         self._total_rewards = np.append(self._total_rewards, reward)
         return obs, reward, done, info
@@ -51,7 +51,7 @@ class EnvWrapper:
     def update_milestones(self, state: NDArray) -> float:
         """
         Check for every milestone if it is reached.
-        Return sum of rewards that are achieved.
+        Return sum of rewards that are achieved and a list of newly achieved milestones
         """
         # A milestone is reached if it is reached with the new state or it already was reached
         are_milestones_reached = np.array([milestone.is_achieved(state) or self.milestones_reached[i]
@@ -64,31 +64,28 @@ class EnvWrapper:
 
         # Update the reached milestones and return the attained reward
         self.milestones_reached = are_milestones_reached
+
+        # Update counter if we have new milestones
+        if len(new_milestones_reached) > 0:
+            self.update_counter(new_milestones_reached)
         return reward
 
-    def get_curr_milestones(self) -> int:
+    def get_number_of_milestones_reached(self) -> int:
         """
-        Returns the current milestone i.e. index of last boolean true in reached milestones
+        Returns the current milestone i.e. index of last boolean true in reached milestones.
+        Assumes all milestones are in order
         :return: integer (index)
         """
         if not self.uses_milestones:
             return 0
-        indexes = np.where(self.milestones_reached)[0]
-        return indexes[-1] if len(indexes) > 0 else 0
+        return self.milestones_reached.sum()
 
-    def update_counter(self, milestones_reached):
-        """
-        Updates the counter, whenever the milestones_reached array changed, update the counter
-        :param milestones_reached:
-        """
-        if self.cached_milestones_reached is not None and not np.array_equal(self.cached_milestones_reached,
-                                                                             milestones_reached):
-            self.counter[self.get_curr_milestones()] += 1
-
-        self.cached_milestones_reached = milestones_reached
+    def update_counter(self, new_milestones_reached):
+        # Shift milestones reached by 1 to the right because first element in counter is for initial position
+        self.counter[new_milestones_reached + 1] += 1
 
     def reset_counter(self):
-        self.counter = np.zeros(self.n_milestones, dtype=int)
+        self.counter = np.zeros(self.n_milestones + 1, dtype=int)
 
     def log_latest(self):
         if len(self._episode_rewards) == 0:

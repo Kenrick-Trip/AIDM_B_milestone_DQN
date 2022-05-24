@@ -46,12 +46,6 @@ class AdaptiveDQN(DQN):
             plt.ion()
             plt.show()
 
-    def get_eps(self):
-        """
-        Returns an array containing the epsilon for each milestone
-        :return:
-        """
-        return self.eps_zero / (self.decay_func(self.env_wrapper.counter) + 1)
 
     def add_plot(self, axis, y, title="", per_episode=False, ylabel="", smooth=False):
         x = np.arange(1, len(y) + 1)
@@ -108,14 +102,12 @@ class AdaptiveDQN(DQN):
         and finding its respective epsilon
         :return: float (epsilon)
         """
-        eps = self.get_eps()
-        curr_milestone = self.env_wrapper.get_curr_milestones()
-
+        eps = self.eps_zero / (self.decay_func(self.env_wrapper.counter) + 1)
+        curr_milestone = self.env_wrapper.get_number_of_milestones_reached()
+        # self.env_wrapper.update_counter(curr_milestone)
         if self.exploration_method == ExplorationMethod.ADAPTIVE_1:
-            self.env_wrapper.update_counter(curr_milestone)
             return eps[curr_milestone]
         elif self.exploration_method == ExplorationMethod.ADAPTIVE_2:
-            self.env_wrapper.update_counter(curr_milestone)
             return eps[curr_milestone + 1]
         else:
             # If exploration method is not an adaptive method, we just use the regular linear decay
@@ -146,7 +138,7 @@ class AdaptiveDQN(DQN):
 
         if self.plot["enabled"]:
             self.exploration_array = np.append(self.exploration_array, self.exploration_rate)
-            self.milestone_array = np.append(self.milestone_array, self.env_wrapper.get_curr_milestones())
+            self.milestone_array = np.append(self.milestone_array, self.env_wrapper.get_number_of_milestones_reached())
             self.reward_array = np.append(self.reward_array, self.env_wrapper.reward)
             self.episode_array = np.append(self.episode_array, self._episode_num)
 
