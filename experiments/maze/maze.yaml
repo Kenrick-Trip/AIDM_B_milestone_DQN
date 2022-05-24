@@ -1,19 +1,19 @@
 seed: 123
-trainsteps: 200000
+trainsteps: 400000
 demosteps: 1000
 env: "maze-sample-10x10-v0"
 num_milestones: 5
 milestone_reward: 1
 policy: "MlpPolicy"
-exploration_method: "adaptive1" # See ExplorationMethod enum for all exploration methods
+exploration_method: "traditional" # See ExplorationMethod enum for all exploration methods
 plot:
   enabled: True
-  update_interval: 2000
-  reset_heat_map_every_update: False
+  update_interval: 10000
+  reset_heat_map_every_update: True
   # Configure smoothing per plot
   smooth:
     # Set to True to enable plot smoothing in general
-    enabled: False
+    enabled: True
     # If a plot is not mentioned it will default to False
     milestones: True
     episode_rewards: True

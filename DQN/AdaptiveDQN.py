@@ -48,6 +48,7 @@ class AdaptiveDQN(DQN):
 
 
     def add_plot(self, axis, y, title="", per_episode=False, ylabel="", smooth=False):
+        axis.clear()
         x = np.arange(1, len(y) + 1)
 
         if not smooth:
@@ -85,6 +86,7 @@ class AdaptiveDQN(DQN):
         self.add_plot(self.axis[1, 2], y=self.episode_array, title="Elapsed episodes",
                       smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("elapsed_episodes")))
 
+    def draw_plot(self):
         plt.tight_layout()
         plt.draw()
         plt.pause(0.3)
@@ -135,6 +137,8 @@ class AdaptiveDQN(DQN):
                 self.heat_map.generate2D()
             if self.plot["reset_heat_map_every_update"]:
                 self.heat_map.reset_count()
+
+            self.draw_plot()
 
         if self.plot["enabled"]:
             self.exploration_array = np.append(self.exploration_array, self.exploration_rate)

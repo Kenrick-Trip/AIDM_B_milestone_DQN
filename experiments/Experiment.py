@@ -81,7 +81,8 @@ class Experiment:
         model = AdaptiveDQN(env, self.config['policy'], env, results_folder=self.results_dir,
                             exploration_method=exploration_method, plot=self.config['plot'],
                             decay_func=lambda x: np.sqrt(x), verbose=1, learning_starts=learning_starts,
-                            seed=seed, policy_kwargs=self.config['policy_kwargs'], uncertainty=uncertainty)
+                            seed=seed, policy_kwargs=self.config['policy_kwargs'], uncertainty=uncertainty,
+                            exploration_fraction=0.9)
 
         self._train(model)
         self._demo(env, model)
