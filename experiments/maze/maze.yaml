@@ -13,7 +13,7 @@ plot:
   # Configure smoothing per plot
   smooth:
     # Set to True to enable plot smoothing in general
-    enabled: True
+    enabled: False
     # If a plot is not mentioned it will default to False
     milestones: True
     episode_rewards: True
