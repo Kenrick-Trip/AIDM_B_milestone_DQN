@@ -8,7 +8,7 @@ policy: "MlpPolicy"
 exploration_method: "adaptive1" # See ExplorationMethod enum for all exploration methods
 plot:
   enabled: True
-  update_interval: 10000
+  update_interval: 2000
   reset_heat_map_every_update: False
   # Configure smoothing per plot
   smooth:
@@ -26,3 +26,4 @@ uncertainty_kwargs:
   state_bounds: null
   resolution: 10
   first_n_dim: 2
+visualize_environment_only: False # If true then don't train but render the environment given the setup

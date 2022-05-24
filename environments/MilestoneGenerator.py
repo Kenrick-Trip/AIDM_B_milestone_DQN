@@ -86,7 +86,7 @@ class MazeMilestoneGenerator(MilestoneGenerator):
 
         milestones = []
         for state in shortest_path[1:-1]:
-            if dist[tuple(state)] <= tot_dist * (n - len(milestones) - 1) / n:
+            if dist[tuple(state)] <= tot_dist * (n - len(milestones)) / n:
                 # milestones.append(ExactMilestone(reward=dist[tuple(state)], goal_state=state))
                 milestones.append(ExactMilestone(reward=self.reward, goal_state=state))
             if len(milestones) == n:

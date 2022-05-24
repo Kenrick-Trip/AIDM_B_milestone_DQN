@@ -1,3 +1,4 @@
+import sys
 import time
 import gym
 import numpy as np
@@ -33,7 +34,9 @@ class Experiment:
         model.set_logger(self.logger)
         model.learn(total_timesteps=self.config["trainsteps"])
 
-    def _demo(self, env, model):
+    @staticmethod
+    def _prepare_demo(env):
+        """Make sure environment is ready for demo"""
         # We have to force enable render for maze
         # TODO: there must be a cleaner way !
         try:
@@ -41,6 +44,8 @@ class Experiment:
         except AttributeError:
             pass
 
+    def _demo(self, env, model):
+        self._prepare_demo(env)
         obs = env.reset()
         for i in range(self.config["demosteps"]):
             action, _states = model.predict(obs, deterministic=True)
@@ -64,6 +69,12 @@ class Experiment:
             env = EnvWrapper(self.get_env(), [])
         else:
             env = self.get_env_wrapper(self.get_env())
+
+        # Special mode for quick view of environment
+        if self.config['visualize_environment_only']:
+            self._prepare_demo(env)
+            self._visualize_env_and_exit(env)
+
         uncertainty = CountUncertainty(env, **self.config[
             'uncertainty_kwargs']) if 'uncertainty_kwargs' in self.config else None
 
@@ -94,3 +105,9 @@ class Experiment:
 
         print("Using config file ", args.config, "!")
         return config, args.config
+
+    @staticmethod
+    def _visualize_env_and_exit(env):
+        env.render()
+        input("Press any key to close...")
+        sys.exit(0)

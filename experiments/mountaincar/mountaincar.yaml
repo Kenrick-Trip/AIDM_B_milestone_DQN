@@ -27,3 +27,4 @@ uncertainty_kwargs:
   state_bounds: null
   resolution: 25
   first_n_dim: 1
+visualize_environment_only: False # If true then don't train but render the environment given the setup
