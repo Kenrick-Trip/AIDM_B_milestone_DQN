@@ -20,7 +20,7 @@ class MilestoneGenerator(ABC):
 class MazeMilestoneGenerator(MilestoneGenerator):
     """Copy of maze_2d_dijkstra.py but then in a class"""
 
-    def __init__(self, env: MazeEnv):
+    def __init__(self, env: MazeEnv, reward):
         super().__init__(env)
 
         # Number of discrete states (bucket) per state dimension
@@ -28,6 +28,7 @@ class MazeMilestoneGenerator(MilestoneGenerator):
         self.num_buckets = self.maze_size  # one bucket per grid
         self.final_state = (self.maze_size[0] - 1, self.maze_size[1] - 1)
         self.actions = ["N", "S", "E", "W"]
+        self.reward = reward
         # Number of discrete actions
         self.num_actions = env.action_space.n
         # Bounds for each discrete state
@@ -87,14 +88,15 @@ class MazeMilestoneGenerator(MilestoneGenerator):
         for state in shortest_path[1:-1]:
             if dist[tuple(state)] <= tot_dist * (n - len(milestones) - 1) / n:
                 # milestones.append(ExactMilestone(reward=dist[tuple(state)], goal_state=state))
-                milestones.append(ExactMilestone(reward=1, goal_state=state))
+                milestones.append(ExactMilestone(reward=self.reward, goal_state=state))
             if len(milestones) == n:
                 break
         return list(reversed(milestones))
 
 
 class MountainCarMilestoneGenerator(MilestoneGenerator):
-    def __init__(self, env: gym.Env):
+    def __init__(self, env: gym.Env, reward):
+        self.reward = reward
         super().__init__(env)
 
     def get_milestones(self, n: int,
@@ -107,6 +109,6 @@ class MountainCarMilestoneGenerator(MilestoneGenerator):
         """
         spacing = (end_position - begin_position) / (n - 1)
         milestone_locations = [begin_position + i * spacing for i in range(n)]
-        milestones = [PassingMilestone(goal_state=np.array([loc, np.nan]), reward=20)
+        milestones = [PassingMilestone(goal_state=np.array([loc, np.nan]), reward=self.reward)
                       for i, loc in enumerate(milestone_locations)]
         return milestones

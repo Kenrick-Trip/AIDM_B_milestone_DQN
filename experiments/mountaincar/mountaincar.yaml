@@ -3,6 +3,7 @@ trainsteps: 400000
 demosteps: 10
 env: "MountainCar-v0"
 num_milestones: 10
+milestone_reward: 20
 policy: "MlpPolicy"
 exploration_method: "adaptive1" # See ExplorationMethod enum for all exploration methods
 plot:

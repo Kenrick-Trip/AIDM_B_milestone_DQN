@@ -8,7 +8,7 @@ import shutil
 
 class MountainCarExperiment(Experiment):
     def get_env_wrapper(self, env):
-        milestone_generator = MountainCarMilestoneGenerator(env)
+        milestone_generator = MountainCarMilestoneGenerator(env, self.config["milestone_reward"])
         milestones = milestone_generator.get_milestones(self.config["num_milestones"])
         return EnvWrapper(env, milestones)
 
