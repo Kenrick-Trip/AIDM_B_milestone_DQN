@@ -5,10 +5,10 @@ env: "MountainCar-v0"
 num_milestones: 10
 milestone_reward: 20
 policy: "MlpPolicy"
-exploration_method: "adaptive2" # See ExplorationMethod enum for all exploration methods
+exploration_method: "adaptive1" # See ExplorationMethod enum for all exploration methods
 plot:
   enabled: True
-  update_interval: 5000
+  update_interval: 2000
   reset_heat_map_every_update: True
   # Configure smoothing per plot
   smooth:
@@ -27,3 +27,4 @@ uncertainty_kwargs:
   state_bounds: null
   resolution: 25
   first_n_dim: 1
+visualize_environment_only: False # If true then don't train but render the environment given the setup

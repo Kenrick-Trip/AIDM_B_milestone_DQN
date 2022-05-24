@@ -47,6 +47,7 @@ class AdaptiveDQN(DQN):
             plt.show()
 
     def add_plot(self, axis, y, title="", per_episode=False, ylabel="", smooth=False):
+        axis.clear()
         x = np.arange(1, len(y) + 1)
 
         if not smooth:
@@ -84,6 +85,7 @@ class AdaptiveDQN(DQN):
         self.add_plot(self.axis[1, 2], y=self.episode_array, title="Elapsed episodes",
                       smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("elapsed_episodes")))
 
+    def draw_plot(self):
         plt.tight_layout()
         plt.draw()
         plt.pause(0.3)
@@ -99,13 +101,15 @@ class AdaptiveDQN(DQN):
         and finding its respective epsilon
         :return: float (epsilon)
         """
-        eps = self.eps_zero / (self.decay_func(self.env_wrapper.counter) + 1)
-        curr_milestone = self.env_wrapper.get_number_of_milestones_reached()
-        # self.env_wrapper.update_counter(curr_milestone)
+        # Current number of milestones reached
+        current_milestone = self.env_wrapper.get_number_of_milestones_reached()
         if self.exploration_method == ExplorationMethod.ADAPTIVE_1:
-            return eps[curr_milestone]
+            return self.eps_zero / (self.decay_func(self.env_wrapper.counter[current_milestone]))
         elif self.exploration_method == ExplorationMethod.ADAPTIVE_2:
-            return eps[curr_milestone + 1]
+            # Method 2:
+            #   Look at the next milestone in the list
+            #   Add + 1 because we otherwise divide by zero at the start
+            return self.eps_zero / (self.decay_func(self.env_wrapper.counter[current_milestone + 1]) + 1)
         else:
             # If exploration method is not an adaptive method, we just use the regular linear decay
             return self.exploration_schedule(self._current_progress_remaining)
@@ -142,6 +146,8 @@ class AdaptiveDQN(DQN):
                 self.heat_map.generate2D()
             if self.plot["reset_heat_map_every_update"]:
                 self.heat_map.reset_count()
+
+            self.draw_plot()
 
         if self.plot["enabled"]:
             self.exploration_array = np.append(self.exploration_array, self.exploration_rate)

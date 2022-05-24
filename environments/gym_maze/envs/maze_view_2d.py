@@ -163,6 +163,9 @@ class MazeView2D:
             self.screen.blit(self.background, (0, 0))
             self.screen.blit(self.maze_layer,(0, 0))
 
+            # Debug purposes only
+            # self.__draw_coordinates()
+
             if mode == "human":
                 pygame.display.flip()
 
@@ -348,6 +351,16 @@ class MazeView2D:
     @property
     def CELL_H(self):
         return float(self.SCREEN_H) / float(self.maze.MAZE_H)
+
+    def __draw_coordinates(self):
+        """Debugging purposes only"""
+        pygame.font.init()
+        my_font = pygame.font.SysFont('Arial', 13)
+        for y in range(self.maze.MAZE_H):
+            for x in range(self.maze.MAZE_W):
+                text_surface = my_font.render(f"{(x, y)}", False, (0, 0, 0))
+                self.screen.blit(text_surface, ((x+1) * self.CELL_W - 0.5 * self.CELL_W - 10,
+                                                (y+1) * self.CELL_H - 0.5 * self.CELL_H))
 
     def do_enable_render(self):
         self.__enable_render = True

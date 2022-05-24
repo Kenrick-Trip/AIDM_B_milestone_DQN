@@ -26,11 +26,12 @@ class HeatMap:
         if "maze" not in self.env.spec.id:
             raise Exception("2d heatmap only supported for maze")
         data = (self.uncertainty.count - self.last_count).numpy().T
-        plot = self.axis.imshow(data.T, interpolation='nearest')
+        plot = self.axis.imshow(data,  cmap='summer')
         self.axis.set_title("Location visitation count")
         self.axis.set_xlabel("x-position")
         self.axis.set_ylabel("y-position")
         self.colorbar = self.fig.colorbar(plot, ax=self.axis, shrink=0.7, orientation='horizontal')
+        self.axis.clear()
 
     def reset_count(self):
         self.last_count = np.copy(self.uncertainty.count)
