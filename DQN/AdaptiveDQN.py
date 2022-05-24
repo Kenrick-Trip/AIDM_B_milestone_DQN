@@ -102,13 +102,15 @@ class AdaptiveDQN(DQN):
         and finding its respective epsilon
         :return: float (epsilon)
         """
-        eps = self.eps_zero / (self.decay_func(self.env_wrapper.counter) + 1)
-        curr_milestone = self.env_wrapper.get_number_of_milestones_reached()
-        # self.env_wrapper.update_counter(curr_milestone)
+        # Current number of milestones reached
+        current_milestone = self.env_wrapper.get_number_of_milestones_reached()
         if self.exploration_method == ExplorationMethod.ADAPTIVE_1:
-            return eps[curr_milestone]
+            return self.eps_zero / (self.decay_func(self.env_wrapper.counter[current_milestone]))
         elif self.exploration_method == ExplorationMethod.ADAPTIVE_2:
-            return eps[curr_milestone + 1]
+            # Method 2:
+            #   Look at the next milestone in the list
+            #   Add + 1 because we otherwise divide by zero at the start
+            return self.eps_zero / (self.decay_func(self.env_wrapper.counter[current_milestone + 1]) + 1)
         else:
             # If exploration method is not an adaptive method, we just use the regular linear decay
             return self.exploration_schedule(self._current_progress_remaining)
