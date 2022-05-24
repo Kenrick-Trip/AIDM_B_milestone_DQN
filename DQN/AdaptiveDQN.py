@@ -85,8 +85,6 @@ class AdaptiveDQN(DQN):
         self.add_plot(self.axis[1, 2], y=self.episode_array, title="Elapsed episodes",
                       smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("elapsed_episodes")))
 
-        # @kenrick Can this be removed?
-        # self.logger.record("trajectory/figure", Figure(self.fig, close=True), exclude=("stdout", "log", "json", "csv"))
         plt.tight_layout()
         plt.draw()
         plt.pause(0.3)

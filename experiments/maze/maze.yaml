@@ -3,6 +3,7 @@ trainsteps: 200000
 demosteps: 1000
 env: "maze-sample-10x10-v0"
 num_milestones: 5
+milestone_reward: 1
 policy: "MlpPolicy"
 exploration_method: "adaptive1" # See ExplorationMethod enum for all exploration methods
 plot:
