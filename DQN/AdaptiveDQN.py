@@ -1,4 +1,7 @@
 from enum import Enum
+from typing import Dict, Tuple
+
+from scipy import interpolate
 
 from DQN.uncertainty import CountUncertainty
 from stable_baselines3 import DQN
@@ -50,36 +53,54 @@ class AdaptiveDQN(DQN):
         """
         return self.eps_zero / (self.decay_func(self.env_wrapper.counter) + 1)
 
+    def add_plot(self, axis, y, title="", per_episode=False, ylabel="", smooth=False):
+        x = np.arange(1, len(y) + 1)
+
+        if not smooth:
+            axis.plot(x, y, 'g')
+        else:
+            # Smooth with moving average
+            y_smooth = np.convolve(y, np.ones(self.plot["smooth"]["n"]) / self.plot["smooth"]["n"], 'valid')
+            x_smooth = np.arange(1, len(y_smooth) + 1)
+            axis.plot(x_smooth, y_smooth, 'g')
+
+        if title is not None and len(title) > 0:
+            axis.set_title(title)
+
+        if per_episode:
+            axis.set_xlabel("Episode")
+        else:
+            axis.set_xlabel("Timestep")
+
+        if ylabel is not None and len(ylabel) > 0:
+            axis.set_ylabel(ylabel)
+
     def plot_results(self):
         milestone_array = [ep["num_milestones_reached"] for ep in self.env_wrapper._episode_log]
         episode_reward_array = [ep["episode_rewards"] for ep in self.env_wrapper._episode_log]
         total_reward_array = [ep["total_rewards"] for ep in self.env_wrapper._episode_log]
-        episode_numbers = np.arange(1, len(episode_reward_array) + 1)
-        self.axis[0, 0].plot(self.exploration_array, 'g')
-        self.axis[0, 0].set_title('Exploration rates')
-        self.axis[0, 0].set_xlabel("Timestep")
-        self.axis[0, 1].plot(episode_numbers, milestone_array, 'g')
-        self.axis[0, 1].set_title('Reached milestones')
-        self.axis[0, 1].set_xlabel("Episode")
-        self.axis[1, 0].plot(episode_numbers, episode_reward_array, 'g')
-        self.axis[1, 0].set_title('Received reward')
-        self.axis[1, 0].set_xlabel("Episode")
-        self.axis[1, 1].plot(self.episode_array, 'g')
-        self.axis[1, 1].set_title('Elapsed episodes')
-        self.axis[1, 2].plot(episode_numbers, total_reward_array, 'g')
-        self.axis[1, 2].set_title('Total reward (inc. milestones)')
-        self.axis[1, 2].set_xlabel("Episode")
 
-        self.logger.record("trajectory/figure", Figure(self.fig, close=True), exclude=("stdout", "log", "json", "csv"))
+        self.add_plot(self.axis[0, 0], y=self.exploration_array, title="Exploration rates",
+                      smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("exploration_rate")))
+        self.add_plot(self.axis[0, 1], y=milestone_array, title="Reached milestones", per_episode=True,
+                      smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("milestones")))
+        self.add_plot(self.axis[1, 0], y=episode_reward_array, title="Received rewards", per_episode=True,
+                      smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("episode_rewards")))
+        self.add_plot(self.axis[1, 1], y=total_reward_array, title="Total rewards (inc. milestones)", per_episode=True,
+                      smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("total_rewards")))
+        self.add_plot(self.axis[1, 2], y=self.episode_array, title="Elapsed episodes",
+                      smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("elapsed_episodes")))
+
+        # @kenrick Can this be removed?
+        # self.logger.record("trajectory/figure", Figure(self.fig, close=True), exclude=("stdout", "log", "json", "csv"))
         plt.tight_layout()
         plt.draw()
         plt.pause(0.3)
 
-        if self._n_calls % self.plot["save_interval"] == 0:
-            file_path = "./{}/plot_results.pdf".format(self.path_to_results)
-            if os.path.isfile(file_path):
-                os.remove(file_path)
-            plt.savefig(file_path)
+        file_path = os.path.join(self.path_to_results, "plot_results.pdf")
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+        plt.savefig(file_path)
 
     def _get_exploration_rate(self) -> float:
         """
