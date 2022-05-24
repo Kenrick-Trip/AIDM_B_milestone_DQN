@@ -22,9 +22,8 @@ class ExplorationMethod(str, Enum):
 
 
 class AdaptiveDQN(DQN):
-    def __init__(self, env_wrapper: EnvWrapper, *args, results_folder, exploration_method: ExplorationMethod, plot, eps_zero=1.0,
-                 decay_func=np.sqrt,
-                 uncertainty=None, plot_update_interval=10000, reset_heat_map_every_plot=True, **kwargs):
+    def __init__(self, env_wrapper: EnvWrapper, *args, results_folder, exploration_method: ExplorationMethod, plot,
+                 eps_zero=1.0, decay_func=np.sqrt, uncertainty=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.env_wrapper = env_wrapper
         self.eps_zero = eps_zero
@@ -32,8 +31,6 @@ class AdaptiveDQN(DQN):
         self.exploration_method = exploration_method
         self.plot = plot
         self.uncertainty = uncertainty
-        self.plot_update_interval = plot_update_interval
-        self.reset_heat_map_every_plot = reset_heat_map_every_plot
         self.path_to_results = results_folder
 
         if self.plot["enabled"]:
@@ -123,7 +120,7 @@ class AdaptiveDQN(DQN):
                 self.heat_map.generate1D()
             if "maze" in self.env_wrapper.spec.id:
                 self.heat_map.generate2D()
-            if self.reset_heat_map_every_plot:
+            if self.plot["reset_heat_map_every_update"]:
                 self.heat_map.reset_count()
 
         if self.plot["enabled"]:

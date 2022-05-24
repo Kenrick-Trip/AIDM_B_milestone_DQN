@@ -9,7 +9,7 @@ plot:
   enabled: True
   update_interval: 10000
   save_interval: 10000
-reset_heat_map_every_plot: true
+  reset_heat_map_every_update: True
 policy_kwargs:
   net_arch: [ 64,64 ]
 uncertainty_kwargs:
