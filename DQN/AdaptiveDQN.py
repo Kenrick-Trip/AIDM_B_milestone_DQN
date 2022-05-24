@@ -48,7 +48,8 @@ class AdaptiveDQN(DQN):
 
 
     def add_plot(self, axis, y, title="", per_episode=False, ylabel="", smooth=False):
-        axis.clear()
+        # How to clear?
+        # axis.clear()
         x = np.arange(1, len(y) + 1)
 
         if not smooth:
