@@ -123,17 +123,16 @@ class AdaptiveDQN(DQN):
                 polyak_update(self.q_net.parameters(), self.q_net_target.parameters(), self.tau)
 
             self.exploration_rate = self._get_exploration_rate()
-
-            # add data to the logger:
-            n = len([ep["num_milestones_reached"] for ep in self.env_wrapper._episode_log])
-
             self.logger.record("rollout/exploration_rate", self.exploration_rate)
+
+            # Add data to the logger:
+            n = len(self.env_wrapper._episode_log)
             self.logger.record("rollout/num_milestones_reached_per_episode",
-                0 if n <= 0 else [ep["num_milestones_reached"] for ep in self.env_wrapper._episode_log][n-1])
+                               0 if n == 0 else self.env_wrapper._episode_log[n - 1]["num_milestones_reached"])
             self.logger.record("rollout/episode_rewards",
-                0 if n <= 0 else [ep["episode_rewards"] for ep in self.env_wrapper._episode_log][n-1])
+                               0 if n == 0 else self.env_wrapper._episode_log[n - 1]["episode_rewards"])
             self.logger.record("rollout/total_rewards",
-                0 if n <= 0 else [ep["total_rewards"] for ep in self.env_wrapper._episode_log][n-1])
+                               0 if n == 0 else self.env_wrapper._episode_log[n - 1]["total_rewards"])
 
         else:
             super()._on_step()
