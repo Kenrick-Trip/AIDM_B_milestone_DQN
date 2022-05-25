@@ -1,7 +1,7 @@
 seed: 123
-trainsteps: 400000
-demosteps: 10
-env: "MountainCar-v0"
+trainsteps: 40000
+demosteps: 1000
+env: "MountainCarMilestones-v0"
 num_milestones: 10
 policy: "MlpPolicy"
 exploration_method: "adaptive2" # See ExplorationMethod enum for all exploration methods

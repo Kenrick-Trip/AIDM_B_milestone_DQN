@@ -48,7 +48,7 @@ class Experiment:
             env.render()
             if done:
                 obs = env.reset()
-            time.sleep(0.5)
+            time.sleep(0.1)
 
     def main(self):
         """Example for running the AdaptiveDQN"""
@@ -70,13 +70,13 @@ class Experiment:
         model = AdaptiveDQN(env, self.config['policy'], env, results_folder=self.results_dir,
                             exploration_method=exploration_method, plot=self.config['plot'],
                             decay_func=lambda x: np.sqrt(x), verbose=1, learning_starts=learning_starts,
-                            seed=seed, plot_update_interval=self.config["plot_update_interval"],
+                            seed=seed,
                             reset_heat_map_every_plot=self.config["reset_heat_map_every_plot"],
                             policy_kwargs=self.config['policy_kwargs'], uncertainty=uncertainty)
 
         self._train(model)
         self._demo(env, model)
-
+        #plot_update_interval=self.config["plot_update_interval"],
     @staticmethod
     def _read_yaml(file: str, absolute=False):
         if not absolute:

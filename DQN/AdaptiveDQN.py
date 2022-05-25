@@ -119,7 +119,7 @@ class AdaptiveDQN(DQN):
         if self.plot["enabled"] and self._n_calls % self.plot["update_interval"] == 0:
             self.plot_results()
 
-            if "MountainCar" in self.env_wrapper.spec.id:
+            if "MountainCar" in self.env_wrapper.spec.id or "MountainCarMilestones" in self.envwrapper.spec.id:
                 self.heat_map.generate1D()
             if "maze" in self.env_wrapper.spec.id:
                 self.heat_map.generate2D()

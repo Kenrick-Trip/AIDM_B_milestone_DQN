@@ -122,7 +122,8 @@ class EnvWrapper:
     def render(self, mode="human"):
         if hasattr(self.env, "render_milestones"):
             self.env.render_milestones(self.milestones)
-        self.env.render(mode=mode)
+        if hasattr(self.env, "render_shortest_path"):
+            self.env.render(mode=mode)
 
     def close(self):
         self.env.close()
