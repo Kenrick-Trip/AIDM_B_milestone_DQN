@@ -80,6 +80,6 @@ class CountUncertainty:
         n = th.zeros(len(state))
         for i, s in enumerate(state):
             # b = self.state_bin(s)
-            b = tuple(np.asarray(s))
+            b = tuple(np.asarray(s, dtype=int)[:self.first_n_dim])
             n[i] = self.count[b]
         return self.scale / np.sqrt(n + self.eps)
