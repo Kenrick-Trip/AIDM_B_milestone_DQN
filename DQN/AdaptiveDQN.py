@@ -46,13 +46,13 @@ class AdaptiveDQN(DQN):
             self.reward_array = []
             self.episode_array = []
             self.fig, self.axis = plt.subplots(2, 3, figsize=(12, 10))
-            self.heat_map = HeatMap(env_wrapper, uncertainty, axis=self.axis[0, 2])
+            self.heat_map = HeatMap(env_wrapper, uncertainty, self.fig, axis=self.axis[0, 2])
             plt.ion()
             self.fig.show()
 
-
     def add_plot(self, axis, y, title="", per_episode=False, ylabel="", smooth=False):
-        axis.clear()
+        # How to clear?
+        # axis.clear()
         x = np.arange(1, len(y) + 1)
 
         if not smooth:
@@ -132,6 +132,15 @@ class AdaptiveDQN(DQN):
 
             self.exploration_rate = self._get_exploration_rate()
             self.logger.record("rollout/exploration_rate", self.exploration_rate)
+
+            # Add data to the logger:
+            n = len(self.env_wrapper._episode_log)
+            self.logger.record("rollout/num_milestones_reached_per_episode",
+                               0 if n == 0 else self.env_wrapper._episode_log[n - 1]["num_milestones_reached"])
+            self.logger.record("rollout/episode_rewards",
+                               0 if n == 0 else self.env_wrapper._episode_log[n - 1]["episode_rewards"])
+            self.logger.record("rollout/total_rewards",
+                               0 if n == 0 else self.env_wrapper._episode_log[n - 1]["total_rewards"])
 
         else:
             super()._on_step()

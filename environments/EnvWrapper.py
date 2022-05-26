@@ -45,6 +45,8 @@ class EnvWrapper:
             reward += extra_reward
             self.reward = reward
             obs = np.append(obs, self.milestones_reached.astype(np.float32))
+        if done:
+            self.counter[-1] += 1
         self._total_rewards = np.append(self._total_rewards, reward)
         return obs, reward, done, info
 
@@ -85,7 +87,7 @@ class EnvWrapper:
         self.counter[new_milestones_reached + 1] += 1
 
     def reset_counter(self):
-        self.counter = np.zeros(self.n_milestones + 1, dtype=int)
+        self.counter = np.zeros(self.n_milestones + 2, dtype=int)
 
     def log_latest(self):
         if len(self._episode_rewards) == 0:

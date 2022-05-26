@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import gym
@@ -48,7 +49,7 @@ class Experiment:
         self._prepare_demo(env)
         obs = env.reset()
         for i in range(self.config["demosteps"]):
-            action, _states = model.predict(obs, deterministic=True)
+            action, _states = model.predict(obs, deterministic=False)
             obs, reward, done, info = env.step(action)
             env.render()
             if done:

@@ -79,7 +79,7 @@ class MazeEnv(gym.Env):
         if isinstance(action, int) or isinstance(action, np.int64) or isinstance(action, np.int32):
             self.maze_view.move_robot(self.ACTION[action])
         else:
-            self.maze_view.move_robot(action)
+            self.maze_view.move_robot(self.ACTION[int(action)])
 
         if np.array_equal(self.maze_view.robot, self.maze_view.goal):
             reward = 1
