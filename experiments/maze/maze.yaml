@@ -23,7 +23,7 @@ plot:
 policy_kwargs:
   net_arch: [ 64,64 ]
 uncertainty_kwargs:
-  scale: 1
+  scale: 0.1
   state_bounds: null
   resolution: 10
   first_n_dim: 2
