@@ -44,7 +44,7 @@ class AdaptiveDQN(DQN):
             self.fig, self.axis = plt.subplots(2, 3, figsize=(12, 10))
             self.heat_map = HeatMap(env_wrapper, uncertainty, axis=self.axis[0, 2])
             plt.ion()
-            plt.show()
+            self.fig.show()
 
 
     def add_plot(self, axis, y, title="", per_episode=False, ylabel="", smooth=False):
@@ -94,7 +94,9 @@ class AdaptiveDQN(DQN):
         file_path = os.path.join(self.path_to_results, "plot_results.pdf")
         if os.path.isfile(file_path):
             os.remove(file_path)
-        plt.savefig(file_path)
+        # plt.savefig(file_path)
+        self.fig.savefig(file_path)
+        self.fig.show()
 
     def _get_exploration_rate(self) -> float:
         """
