@@ -74,6 +74,8 @@ class AdaptiveDQN(DQN):
         if ylabel is not None and len(ylabel) > 0:
             axis.set_ylabel(ylabel)
 
+        plt.setp(axis.get_xticklabels(), horizontalalignment='right',
+                 fontsize='x-small')
     def plot_results(self):
         milestone_array = [ep["num_milestones_reached"] for ep in self.env_wrapper._episode_log]
         episode_reward_array = [ep["episode_rewards"] for ep in self.env_wrapper._episode_log]
