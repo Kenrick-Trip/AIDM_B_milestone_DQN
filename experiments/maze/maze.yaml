@@ -6,6 +6,7 @@ num_milestones: 5
 milestone_reward: 1
 policy: "MlpPolicy"
 exploration_method: "traditional" # See ExplorationMethod enum for all exploration methods
+intrinsic_reward: False
 plot:
   enabled: True
   update_interval: 10000
