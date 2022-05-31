@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Dict, Tuple
 
+import pandas as pd
 from scipy import interpolate
 
 from DQN.uncertainty import CountUncertainty
@@ -27,7 +28,7 @@ class ExplorationMethod(str, Enum):
 
 
 class AdaptiveDQN(DQN):
-    def __init__(self, env_wrapper: EnvWrapper, *args, results_folder, exploration_method: ExplorationMethod, plot,
+    def __init__(self, env_wrapper: EnvWrapper, *args, results_folder, exploration_method: ExplorationMethod, config,
                  eps_zero=1.0, decay_func=np.sqrt, uncertainty=None, intrinsic_reward=False,
                  **kwargs):
         super().__init__(*args, **kwargs)
@@ -36,15 +37,27 @@ class AdaptiveDQN(DQN):
         self.decay_func = decay_func
         self.exploration_method = exploration_method
         self.intrinsic_reward = intrinsic_reward
-        self.plot = plot
+        self.plot = config["plot"]
+        self.log = config["log"]
         self.uncertainty = uncertainty
+
         self.path_to_results = results_folder
+        self.path_to_results_timestep = os.path.join(self.path_to_results, "per_timestep.csv")
+        """Folder to save results per timestep"""
+        self.path_to_results_episode = os.path.join(self.path_to_results, "per_episode.csv")
+        """Folder to save results per episode"""
+
+        if self.log["enabled"] or self.plot["enabled"]:
+            self.exploration_array = np.zeros(config["trainsteps"])
+            self.milestone_array = np.zeros(config["trainsteps"])
+            self.reward_array = np.zeros(config["trainsteps"])
+            self.episode_array = np.zeros(config["trainsteps"])
+
+            self.episode_milestone_array = []
+            self.episode_reward_array = []
+            self.episode_total_reward_array = []
 
         if self.plot["enabled"]:
-            self.exploration_array = []
-            self.milestone_array = []
-            self.reward_array = []
-            self.episode_array = []
             self.fig, self.axis = plt.subplots(2, 3, figsize=(12, 10))
             self.heat_map = HeatMap(env_wrapper, uncertainty, self.fig, axis=self.axis[0, 2])
             plt.ion()
@@ -76,20 +89,22 @@ class AdaptiveDQN(DQN):
 
         plt.setp(axis.get_xticklabels(), horizontalalignment='right',
                  fontsize='x-small')
-    def plot_results(self):
-        milestone_array = [ep["num_milestones_reached"] for ep in self.env_wrapper._episode_log]
-        episode_reward_array = [ep["episode_rewards"] for ep in self.env_wrapper._episode_log]
-        total_reward_array = [ep["total_rewards"] for ep in self.env_wrapper._episode_log]
 
-        self.add_plot(self.axis[0, 0], y=self.exploration_array, title="Exploration rates",
+    def update_episode_arrays(self):
+        self.episode_milestone_array = np.array([ep["num_milestones_reached"] for ep in self.env_wrapper._episode_log])
+        self.episode_reward_array = np.array([ep["episode_rewards"] for ep in self.env_wrapper._episode_log])
+        self.episode_total_reward_array = np.array([ep["total_rewards"] for ep in self.env_wrapper._episode_log])
+
+    def plot_results(self):
+        self.add_plot(self.axis[0, 0], y=self.exploration_array[:self._n_calls - 1], title="Exploration rates",
                       smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("exploration_rate")))
-        self.add_plot(self.axis[0, 1], y=milestone_array, title="Reached milestones", per_episode=True,
+        self.add_plot(self.axis[0, 1], y=self.episode_milestone_array, title="Reached milestones", per_episode=True,
                       smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("milestones")))
-        self.add_plot(self.axis[1, 0], y=episode_reward_array, title="Received rewards", per_episode=True,
+        self.add_plot(self.axis[1, 0], y=self.episode_reward_array, title="Received rewards", per_episode=True,
                       smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("episode_rewards")))
-        self.add_plot(self.axis[1, 1], y=total_reward_array, title="Total rewards (inc. milestones)", per_episode=True,
+        self.add_plot(self.axis[1, 1], y=self.episode_total_reward_array, title="Total rewards (inc. milestones)", per_episode=True,
                       smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("total_rewards")))
-        self.add_plot(self.axis[1, 2], y=self.episode_array, title="Elapsed episodes",
+        self.add_plot(self.axis[1, 2], y=self.episode_array[:self._n_calls - 1], title="Elapsed episodes",
                       smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("elapsed_episodes")))
 
     def draw_plot(self):
@@ -145,6 +160,16 @@ class AdaptiveDQN(DQN):
         else:
             super()._on_step()
 
+        if self.plot["enabled"] and self._n_calls % self.plot["update_interval"] == 0 \
+            or self.log["enabled"] and self._n_calls % self.log["save_interval"] == 0:
+            self.update_episode_arrays()
+
+        if self.plot["enabled"] or self.log["enabled"]:
+            self.exploration_array[self._n_calls - 1] = self.exploration_rate
+            self.milestone_array[self._n_calls - 1] = self.env_wrapper.get_number_of_milestones_reached()
+            self.reward_array[self._n_calls - 1] = self.env_wrapper.reward
+            self.episode_array[self._n_calls - 1] = self._episode_num
+
         if self.plot["enabled"] and self._n_calls % self.plot["update_interval"] == 0:
             self.plot_results()
 
@@ -157,18 +182,26 @@ class AdaptiveDQN(DQN):
 
             self.draw_plot()
 
-        if self.plot["enabled"]:
-            self.exploration_array = np.append(self.exploration_array, self.exploration_rate)
-            self.milestone_array = np.append(self.milestone_array, self.env_wrapper.get_number_of_milestones_reached())
-            self.reward_array = np.append(self.reward_array, self.env_wrapper.reward)
-            self.episode_array = np.append(self.episode_array, self._episode_num)
+        if self.log["enabled"] and self._n_calls % self.log["save_interval"] == 0:
+            self.save_log_values()
 
-    #     if self.is_new_episode():
-    #         print(f"new episode: {self._episode_num}")
-    #         print(self.ep_info_buffer)
-    #
-    # def is_new_episode(self):
-    #     return len(self.episode_array) > 2 and self.episode_array[-1] - self.episode_array[-2] >= 1
+    def save_log_values(self):
+        # Save values that are updated every timestep
+        timestep_df = pd.DataFrame({
+            "exploration_rate": self.exploration_array[:self._n_calls - 1],
+            "milestones_reached": self.milestone_array[:self._n_calls - 1],
+            "reward": self.reward_array[:self._n_calls - 1],
+            "episode_num": self.episode_array[:self._n_calls - 1]
+        })
+        timestep_df.to_csv(self.path_to_results_timestep)
+
+        # Save values that are updated every episode
+        episode_df = pd.DataFrame({
+            "milestones_reached": self.episode_milestone_array,
+            "reward": self.episode_reward_array,
+            "total_reward": self.episode_total_reward_array,
+        })
+        episode_df.to_csv(self.path_to_results_episode)
 
     def _store_transition(self, replay_buffer, buffer_action, new_obs, reward, dones, infos) -> None:
         if self.uncertainty is not None:

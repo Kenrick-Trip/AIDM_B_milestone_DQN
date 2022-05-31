@@ -8,8 +8,8 @@ policy: "MlpPolicy"
 exploration_method: "adaptive1" # See ExplorationMethod enum for all exploration methods
 intrinsic_reward: False
 plot:
-  enabled: True
-  update_interval: 2000
+  enabled: False
+  update_interval: 10000
   reset_heat_map_every_update: True
   # Configure smoothing per plot
   smooth:
@@ -21,6 +21,9 @@ plot:
     episode_rewards: True
     total_rewards: True
     n: 11
+log:
+  enabled: True
+  save_interval: 10000
 policy_kwargs:
   net_arch: [ 64,64 ]
 uncertainty_kwargs:

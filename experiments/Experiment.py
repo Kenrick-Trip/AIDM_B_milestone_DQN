@@ -80,7 +80,7 @@ class Experiment:
             'uncertainty_kwargs']) if 'uncertainty_kwargs' in self.config else None
 
         model = AdaptiveDQN(env, self.config['policy'], env, results_folder=self.results_dir,
-                            exploration_method=exploration_method, plot=self.config['plot'],
+                            exploration_method=exploration_method, config=self.config,
                             decay_func=lambda x: np.sqrt(x), verbose=1, learning_starts=learning_starts,
                             seed=seed, policy_kwargs=self.config['policy_kwargs'], uncertainty=uncertainty,
                             exploration_fraction=0.8, intrinsic_reward=self.config[

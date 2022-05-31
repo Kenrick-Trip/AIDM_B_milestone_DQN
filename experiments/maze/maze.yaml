@@ -20,6 +20,9 @@ plot:
     episode_rewards: True
     total_rewards: True
     n: 11
+log:
+  enabled: True
+  save_interval: 20000
 policy_kwargs:
   net_arch: [ 64,64 ]
 uncertainty_kwargs:
