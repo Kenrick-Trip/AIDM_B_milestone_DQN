@@ -1,11 +1,8 @@
-seed: 123
-trainsteps: 400000
 demosteps: 1000
 env: "maze-sample-10x10-v0"
 num_milestones: 5
 milestone_reward: 1
 policy: "MlpPolicy"
-exploration_method: "adaptive2" # See ExplorationMethod enum for all exploration methods
 intrinsic_reward: False
 plot:
   enabled: False
@@ -31,3 +28,6 @@ uncertainty_kwargs:
   resolution: 10
   first_n_dim: 2
 visualize_environment_only: False # If true then don't train but render the environment given the setup
+trainsteps: 40000
+seed: 123
+exploration_method: "adaptive2" # See ExplorationMethod enum for all exploration methods
