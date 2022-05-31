@@ -1,4 +1,4 @@
-trainsteps: 400000
+trainsteps: 5000
 demosteps: 10
 env: "MountainCar-v0"
 num_milestones: 10
