@@ -3,6 +3,7 @@ num_milestones: 10
 milestone_reward: 20
 policy: "MlpPolicy"
 intrinsic_reward: False
+learning_rate: 0.0001
 plot:
   enabled: False
   update_interval: 10000
