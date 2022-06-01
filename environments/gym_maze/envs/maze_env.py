@@ -85,7 +85,8 @@ class MazeEnv(gym.Env):
             reward = 1
             done = True
         else:
-            reward = -0.1/(self.maze_size[0]*self.maze_size[1])
+            reward = -0.1/self.maze_size[0]
+            #reward = -0.1/(self.maze_size[0]*self.maze_size[1])
             done = False
 
         self.state = self.maze_view.robot
@@ -212,3 +213,10 @@ class MazeEnvSample21x21(MazeEnv):
     def __init__(self, enable_render=True):
         super(MazeEnvSample21x21, self).__init__(maze_file="maze2d_21x21.npy",
                                                    enable_render=enable_render)
+
+
+class MazeEnvSample15x15(MazeEnv):
+
+    def __init__(self, enable_render=True):
+        super(MazeEnvSample15x15, self).__init__(maze_file="maze2d_15x15.npy",
+                                                 enable_render=enable_render)

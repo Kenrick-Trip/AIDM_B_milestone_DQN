@@ -1,9 +1,10 @@
 demosteps: 1000
 env: "maze-sample-10x10-v0"
-num_milestones: 5
-milestone_reward: 1
+num_milestones: 3
+milestone_reward: 0.3
 policy: "MlpPolicy"
 intrinsic_reward: False
+learning_rate: 0.0005
 plot:
   enabled: False
   update_interval: 20000

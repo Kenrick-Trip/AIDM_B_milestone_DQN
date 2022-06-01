@@ -23,7 +23,7 @@ register(
 register(
     id='maze-sample-10x10-v0',
     entry_point='environments.gym_maze.envs:MazeEnvSample10x10',
-    max_episode_steps=10000,
+    max_episode_steps=100,
 )
 
 register(
@@ -99,5 +99,12 @@ register(
     id='maze-sample-21x21-v0',
     entry_point='environments.gym_maze.envs:MazeEnvSample21x21',
     max_episode_steps=1000000,
+    nondeterministic=True,
+)
+
+register(
+    id='maze-sample-15x15-v0',
+    entry_point='environments.gym_maze.envs:MazeEnvSample15x15',
+    max_episode_steps=300,
     nondeterministic=True,
 )
