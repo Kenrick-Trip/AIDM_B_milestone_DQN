@@ -33,3 +33,6 @@ demosteps: 10
 trainsteps: 5000
 seed: 123
 exploration_method: "adaptive1" # See ExplorationMethod enum for all exploration methods
+eps_zero: 1.00
+eps_min: 0.05
+denominator: 1000

@@ -80,9 +80,15 @@ class MazeMilestoneGenerator(MilestoneGenerator):
                         curDis -= 1
         return dist, shortest_path
 
-    def get_milestones(self, n: int) -> List[Milestone]:
+    def get_milestones(self, n: int, results_dir: str) -> List[Milestone]:
         dist, shortest_path = self.solve_dijkstra()
         tot_dist = dist[tuple(self.final_state)]
+
+        # Write total distance to a file
+        f = open(results_dir + "/tot_dist.tmp", "w")
+        f.write(str(tot_dist)+"\n")
+        f.write(str(self.maze_size[0]))
+        f.close()
 
         milestones = []
         interval = len(shortest_path[:-1])//(n)

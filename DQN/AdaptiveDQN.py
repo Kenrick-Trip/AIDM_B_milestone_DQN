@@ -24,28 +24,40 @@ class ExplorationMethod(str, Enum):
     TRADITIONAL_WITH_MILESTONES = "traditional_milestones"
     ADAPTIVE_1 = "adaptive1"
     ADAPTIVE_2 = "adaptive2"
+    ADAPTIVE_3 = "adaptive3"
+    ADAPTIVE_4 = "adaptive4"
     DEEP_EXPLORATION = "deep_exploration"
 
 
 class AdaptiveDQN(DQN):
     def __init__(self, env_wrapper: EnvWrapper, *args, results_folder, exploration_method: ExplorationMethod, config,
-                 eps_zero=1.0, decay_func=np.sqrt, uncertainty=None, intrinsic_reward=False,
+                 decay_func=np.sqrt, uncertainty=None, \
+                                                                        intrinsic_reward=False,
                  **kwargs):
         super().__init__(*args, **kwargs)
         self.env_wrapper = env_wrapper
-        self.eps_zero = eps_zero
+        self.eps_zero = config["eps_zero"]
         self.decay_func = decay_func
         self.exploration_method = exploration_method
         self.intrinsic_reward = intrinsic_reward
         self.plot = config["plot"]
         self.log = config["log"]
         self.uncertainty = uncertainty
+        self.eps_min = config["eps_min"]
+        self.denominator = config["denominator"]
 
         self.path_to_results = results_folder
         self.path_to_results_timestep = os.path.join(self.path_to_results, "per_timestep.csv")
         """Folder to save results per timestep"""
         self.path_to_results_episode = os.path.join(self.path_to_results, "per_episode.csv")
         """Folder to save results per episode"""
+
+        # maze specific
+        min_distance_path = self.path_to_results+"/tot_dist.tmp"
+        if os.path.isfile(min_distance_path):
+            f = open(min_distance_path, "r").read().splitlines()
+            self.max_reward = 1 -0.1/float(f[0])*int(f[1])
+
 
         if self.log["enabled"] or self.plot["enabled"]:
             self.exploration_array = np.zeros(config["trainsteps"])
@@ -63,18 +75,25 @@ class AdaptiveDQN(DQN):
             plt.ion()
             self.fig.show()
 
-    def add_plot(self, axis, y, title="", per_episode=False, ylabel="", smooth=False):
+    def add_plot(self, axis, y, title="", per_episode=False, ylabel="", smooth=False,
+                 plotMaxRew=False):
         # How to clear?
         # axis.clear()
         x = np.arange(1, len(y) + 1)
 
         if not smooth:
             axis.plot(x, y, 'g')
+
+            if plotMaxRew:
+                axis.plot(x, [self.max_reward]*len(x), 'b')
         else:
             # Smooth with moving average
             y_smooth = np.convolve(y, np.ones(self.plot["smooth"]["n"]) / self.plot["smooth"]["n"], 'valid')
             x_smooth = np.arange(1, len(y_smooth) + 1)
             axis.plot(x_smooth, y_smooth, 'g')
+
+            if plotMaxRew:
+                    axis.plot(x_smooth, [self.max_reward]*len(x_smooth), 'b')
 
         if title is not None and len(title) > 0:
             axis.set_title(title)
@@ -101,7 +120,8 @@ class AdaptiveDQN(DQN):
         self.add_plot(self.axis[0, 1], y=self.episode_milestone_array, title="Reached milestones", per_episode=True,
                       smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("milestones")))
         self.add_plot(self.axis[1, 0], y=self.episode_reward_array, title="Received rewards", per_episode=True,
-                      smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("episode_rewards")))
+                      smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get(
+                          "episode_rewards")), plotMaxRew=True)
         self.add_plot(self.axis[1, 1], y=self.episode_total_reward_array, title="Total rewards (inc. milestones)", per_episode=True,
                       smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("total_rewards")))
         self.add_plot(self.axis[1, 2], y=self.episode_array[:self._n_calls - 1], title="Elapsed episodes",
@@ -134,6 +154,18 @@ class AdaptiveDQN(DQN):
             #   Look at the next milestone in the list
             #   Add + 1 because we otherwise divide by zero at the start
             return self.eps_zero / (self.decay_func(self.env_wrapper.counter[current_milestone + 1]) + 1)
+        elif self.exploration_method == ExplorationMethod.ADAPTIVE_3:
+            # Method 3
+            #   Look at the current milestone in the list, but use a linear decay function
+            return max(self.eps_zero*(1 - self.env_wrapper.counter[
+                current_milestone]/self.denominator),
+                       self.eps_min)
+        elif self.exploration_method == ExplorationMethod.ADAPTIVE_4:
+            # Method 4
+            #   Look at the current milestone in the list, but use a linear decay function
+            return max(self.eps_zero*(1 - self.env_wrapper.counter[
+                current_milestone + 1]/self.denominator),
+                       self.eps_min)
         else:
             # If exploration method is not an adaptive method, we just use the regular linear decay
             return self.exploration_schedule(self._current_progress_remaining)

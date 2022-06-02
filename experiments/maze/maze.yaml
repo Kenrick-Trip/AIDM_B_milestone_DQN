@@ -5,14 +5,15 @@ milestone_reward: 0.3
 policy: "MlpPolicy"
 intrinsic_reward: False
 learning_rate: 0.0005
+
 plot:
-  enabled: False
+  enabled: True
   update_interval: 20000
   reset_heat_map_every_update: True
   # Configure smoothing per plot
   smooth:
     # Set to True to enable plot smoothing in general
-    enabled: False
+    enabled: True
     # If a plot is not mentioned it will default to False
     milestones: True
     episode_rewards: True
@@ -29,6 +30,9 @@ uncertainty_kwargs:
   resolution: 10
   first_n_dim: 2
 visualize_environment_only: False # If true then don't train but render the environment given the setup
-trainsteps: 40000
+trainsteps: 100000
 seed: 123
-exploration_method: "adaptive2" # See ExplorationMethod enum for all exploration methods
+exploration_method: "adaptive4" # See ExplorationMethod enum for all exploration methods
+eps_zero: 1.00
+eps_min: 0.05
+denominator: 1000
