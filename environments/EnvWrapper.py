@@ -119,9 +119,12 @@ class EnvWrapper:
 
     # Propagate all other functions to the environment
     def render(self, mode="human"):
-        if hasattr(self.env, "render_milestones"):
+        if hasattr(self.env, "mcflag"):
             self.env.render_milestones(self.milestones)
-        self.env.render(mode=mode)
+        else:
+            if hasattr(self.env, "render_milestones"):
+                self.env.render_milestones(self.milestones)
+            self.env.render(mode=mode)
 
     def close(self):
         self.env.close()

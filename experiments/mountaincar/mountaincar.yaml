@@ -1,6 +1,6 @@
-env: "MountainCar-v0"
+env: "MountainCarMilestones-v0"
 num_milestones: 10
-milestone_reward: 20
+milestone_reward: 0.05
 policy: "MlpPolicy"
 intrinsic_reward: False
 learning_rate: 0.0001
@@ -11,7 +11,7 @@ plot:
   # Configure smoothing per plot
   smooth:
     # Set to True to enable plot smoothing in general
-    enabled: False
+    enabled: True
     # If a plot is not mentioned it will default to False
     # See plot_results() in AdaptiveDQN.py
     milestones: True
