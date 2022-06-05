@@ -7,12 +7,14 @@ import pandas as pd
 import yaml
 from matplotlib import pyplot as plt
 
+COLORS = ["orange", "blue", "red", "green", "purple"]
 
 class HistogramSmoothing:
-    def __init__(self, result_dirs: List[str], parameter_name: str, parameter_values: List[Any], save_dir=None, n_bins=100):
+    def __init__(self, result_dirs: List[str], parameter_name: str, parameter_values: List[Any], save_file=None,
+                 n_bins=100):
         self.parameter_name = parameter_name
         self.parameter_values = parameter_values
-        self.save_dir = save_dir
+        self.save_file = save_file
         self.n_bins = n_bins
 
         self.bin_size = None
@@ -100,37 +102,54 @@ class HistogramSmoothing:
 
     def make_plot(self):
         fig, ax = plt.subplots()
-        for label in self.parameter_values:
-            plot_label = f"{label}_mean"
-            ax.plot(self.bins, self.episode_statistics_df[plot_label], label=label)
+        for label, color in zip(self.parameter_values, COLORS[:len(self.parameter_values)]):
+            y_min = np.maximum(self.episode_statistics_df[f"{label}_min"],
+                               self.episode_statistics_df[f"{label}_mean"] - self.episode_statistics_df[f"{label}_std"])
+            if self.max_reward is None:
+                y_max = np.minimum(self.episode_statistics_df[f"{label}_max"],
+                                   self.episode_statistics_df[f"{label}_mean"] + self.episode_statistics_df[
+                                       f"{label}_std"])
+            else:
+                y_max = np.minimum(self.max_reward,
+                                   self.episode_statistics_df[f"{label}_mean"] + self.episode_statistics_df[
+                                       f"{label}_std"])
+            ax.plot(self.bins, self.episode_statistics_df[f"{label}_mean"], label=label, color=color)
+            ax.plot(self.bins, y_max, color=color, linestyle="dotted", alpha=0.2)
+            ax.plot(self.bins, y_min, color=color, linestyle="dotted", alpha=0.2)
+            ax.fill_between(self.bins, y_min, y_max, alpha=0.15, color=color)
         if self.max_reward is not None:
             ax.plot(self.bins, np.full(self.n_bins, self.max_reward), label=f"max_reward ({self.max_reward})")
+        ax.set_ylabel("Reward")
+        ax.set_xlabel("Timestep")
         plt.legend()
+        plt.savefig(self.save_file)
         plt.show()
 
 
 def main():
-    base_dir = "../experiments/maze/results_benchmark1"
+    # base_dir = "../experiments/maze/results_benchmark1"
+    base_dir = "../experiments/maze/results_maze"
     result_dirs = [
-        # "2022-06-05-t-150946",
-        # "2022-06-05-t-151313",
-        # "2022-06-05-t-162814",
-        # "2022-06-05-t-164722",
-        # "2022-06-05-t-171919",
-        # "2022-06-05-t-181534",
-        # "2022-06-05-t-182623",
-        # "2022-06-05-t-182759",
-        # "2022-06-05-t-182930",
-        # "2022-06-05-t-183229",
-        # "2022-06-05-t-183415",
-        # "2022-06-05-t-183600",
-        os.listdir(base_dir)
+        "2022-06-05-t-150946",
+        "2022-06-05-t-151313",
+        "2022-06-05-t-162814",
+        "2022-06-05-t-164722",
+        "2022-06-05-t-171919",
+        "2022-06-05-t-181534",
+        "2022-06-05-t-182623",
+        "2022-06-05-t-182759",
+        "2022-06-05-t-182930",
+        "2022-06-05-t-183229",
+        "2022-06-05-t-183415",
+        "2022-06-05-t-183600",
+        # os.listdir(base_dir)
     ]
     result_dirs = [os.path.join(base_dir, result_dir) for result_dir in result_dirs]
     save_dir = os.path.join(base_dir, "plots")
     os.makedirs(save_dir, exist_ok=True)
+    save_file = os.path.join(save_dir, "plot.png")
     hs = HistogramSmoothing(result_dirs, "exploration_method",
-                            ["adaptive4", "traditional_milestones", "traditional", "adaptive3"], save_dir)
+                            ["adaptive4", "traditional_milestones", "traditional", "adaptive3"], save_file)
     hs.plot()
 
 
