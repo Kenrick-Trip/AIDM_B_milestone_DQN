@@ -22,4 +22,8 @@ if __name__ == '__main__':
     os.makedirs(result_dir)
     shutil.copy(config_file, result_dir + "/config.yaml")
     MazeExperiment(config, result_dir).main()
-    os.remove(result_dir+"/tot_dist.tmp")
+
+    # Check if the total distance file is there; if yes, delete it
+    min_distance_path = result_dir +"/tot_dist.tmp"
+    if os.path.isfile(min_distance_path):
+        os.remove(result_dir+"/tot_dist.tmp")

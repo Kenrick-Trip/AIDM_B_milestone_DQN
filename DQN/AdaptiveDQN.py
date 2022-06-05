@@ -84,7 +84,7 @@ class AdaptiveDQN(DQN):
         if not smooth:
             axis.plot(x, y, 'g')
 
-            if plotMaxRew:
+            if plotMaxRew and hasattr(self, 'max_reward'):
                 axis.plot(x, [self.max_reward]*len(x), 'b')
         else:
             # Smooth with moving average
@@ -92,7 +92,7 @@ class AdaptiveDQN(DQN):
             x_smooth = np.arange(1, len(y_smooth) + 1)
             axis.plot(x_smooth, y_smooth, 'g')
 
-            if plotMaxRew:
+            if plotMaxRew and hasattr(self, 'max_reward'):
                     axis.plot(x_smooth, [self.max_reward]*len(x_smooth), 'b')
 
         if title is not None and len(title) > 0:
