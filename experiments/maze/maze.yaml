@@ -2,7 +2,6 @@ env: "maze-sample-10x10-v0"
 num_milestones: 3
 milestone_reward: 0.3
 policy: "MlpPolicy"
-intrinsic_reward: False
 learning_rate: 0.0005
 
 plot:
@@ -34,5 +33,5 @@ eps_min: 0.05
 denominator: 1000
 demosteps: 1000
 trainsteps: 100000
-seed: 123
-exploration_method: "adaptive4" # See ExplorationMethod enum for all exploration methods
+seed: 22221
+exploration_method: "adaptive3" # See ExplorationMethod enum for all exploration methods

@@ -1,4 +1,4 @@
-env: "MountainCarMilestones-v0"
+env: "MountainCar-v0"
 num_milestones: 10
 milestone_reward: 0.05
 policy: "MlpPolicy"

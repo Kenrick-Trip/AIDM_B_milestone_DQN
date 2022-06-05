@@ -83,8 +83,8 @@ class Experiment:
                             exploration_method=exploration_method, config=self.config,
                             decay_func=lambda x: np.sqrt(x), verbose=1, learning_starts=learning_starts,
                             seed=seed, policy_kwargs=self.config['policy_kwargs'], uncertainty=uncertainty,
-                            exploration_fraction=0.8, intrinsic_reward=self.config['intrinsic_reward'],
-                            learning_rate=self.config['learning_rate'])
+                            exploration_fraction=0.8, learning_rate=self.config['learning_rate'],
+                            max_reward=self.config.get("max_reward"))
 
         self._train(model)
         self._demo(env, model)

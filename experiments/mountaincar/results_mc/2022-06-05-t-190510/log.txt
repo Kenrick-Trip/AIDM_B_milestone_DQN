@@ -1,0 +1,109 @@
+Logging to /home/bas/Documents/Master/Y1/Q4/Algorithms for Intelligent Decision Making Project/Project/AIDM_B_milestone_DQN/experiments/mountaincar/results_mc/2022-06-05-t-190510
+---------------------------------------------------
+| rollout/                             |          |
+|    ep_len_mean                       | 200      |
+|    ep_rew_mean                       | -200     |
+|    episode_rewards                   | -200     |
+|    exploration_rate                  | 0.447    |
+|    num_milestones_reached_per_epi... | 1        |
+|    total_rewards                     | -200     |
+| time/                                |          |
+|    episodes                          | 4        |
+|    fps                               | 1001     |
+|    time_elapsed                      | 0        |
+|    total_timesteps                   | 800      |
+| train/                               |          |
+|    learning_rate                     | 0.0001   |
+|    loss                              | 0.258    |
+|    n_updates                         | 199      |
+---------------------------------------------------
+---------------------------------------------------
+| rollout/                             |          |
+|    ep_len_mean                       | 200      |
+|    ep_rew_mean                       | -200     |
+|    episode_rewards                   | -200     |
+|    exploration_rate                  | 0.333    |
+|    num_milestones_reached_per_epi... | 0        |
+|    total_rewards                     | -200     |
+| time/                                |          |
+|    episodes                          | 8        |
+|    fps                               | 1010     |
+|    time_elapsed                      | 1        |
+|    total_timesteps                   | 1600     |
+| train/                               |          |
+|    learning_rate                     | 0.0001   |
+|    loss                              | 0.0469   |
+|    n_updates                         | 399      |
+---------------------------------------------------
+---------------------------------------------------
+| rollout/                             |          |
+|    ep_len_mean                       | 200      |
+|    ep_rew_mean                       | -200     |
+|    episode_rewards                   | -200     |
+|    exploration_rate                  | 0.277    |
+|    num_milestones_reached_per_epi... | 1        |
+|    total_rewards                     | -200     |
+| time/                                |          |
+|    episodes                          | 12       |
+|    fps                               | 1007     |
+|    time_elapsed                      | 2        |
+|    total_timesteps                   | 2400     |
+| train/                               |          |
+|    learning_rate                     | 0.0001   |
+|    loss                              | 0.00347  |
+|    n_updates                         | 599      |
+---------------------------------------------------
+---------------------------------------------------
+| rollout/                             |          |
+|    ep_len_mean                       | 200      |
+|    ep_rew_mean                       | -200     |
+|    episode_rewards                   | -200     |
+|    exploration_rate                  | 0.243    |
+|    num_milestones_reached_per_epi... | 1        |
+|    total_rewards                     | -200     |
+| time/                                |          |
+|    episodes                          | 16       |
+|    fps                               | 992      |
+|    time_elapsed                      | 3        |
+|    total_timesteps                   | 3200     |
+| train/                               |          |
+|    learning_rate                     | 0.0001   |
+|    loss                              | 0.00137  |
+|    n_updates                         | 799      |
+---------------------------------------------------
+---------------------------------------------------
+| rollout/                             |          |
+|    ep_len_mean                       | 200      |
+|    ep_rew_mean                       | -200     |
+|    episode_rewards                   | -200     |
+|    exploration_rate                  | 0.218    |
+|    num_milestones_reached_per_epi... | 1        |
+|    total_rewards                     | -200     |
+| time/                                |          |
+|    episodes                          | 20       |
+|    fps                               | 984      |
+|    time_elapsed                      | 4        |
+|    total_timesteps                   | 4000     |
+| train/                               |          |
+|    learning_rate                     | 0.0001   |
+|    loss                              | 0.000609 |
+|    n_updates                         | 999      |
+---------------------------------------------------
+---------------------------------------------------
+| rollout/                             |          |
+|    ep_len_mean                       | 200      |
+|    ep_rew_mean                       | -200     |
+|    episode_rewards                   | -200     |
+|    exploration_rate                  | 0.2      |
+|    num_milestones_reached_per_epi... | 0        |
+|    total_rewards                     | -200     |
+| time/                                |          |
+|    episodes                          | 24       |
+|    fps                               | 982      |
+|    time_elapsed                      | 4        |
+|    total_timesteps                   | 4800     |
+| train/                               |          |
+|    learning_rate                     | 0.0001   |
+|    loss                              | 0.00038  |
+|    n_updates                         | 1199     |
+---------------------------------------------------

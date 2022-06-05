@@ -31,15 +31,12 @@ class ExplorationMethod(str, Enum):
 
 class AdaptiveDQN(DQN):
     def __init__(self, env_wrapper: EnvWrapper, *args, results_folder, exploration_method: ExplorationMethod, config,
-                 decay_func=np.sqrt, uncertainty=None, \
-                                                                        intrinsic_reward=False,
-                 **kwargs):
+                 decay_func=np.sqrt, uncertainty=None, max_reward=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.env_wrapper = env_wrapper
         self.eps_zero = config["eps_zero"]
         self.decay_func = decay_func
         self.exploration_method = exploration_method
-        self.intrinsic_reward = intrinsic_reward
         self.plot = config["plot"]
         self.log = config["log"]
         self.uncertainty = uncertainty
@@ -52,12 +49,7 @@ class AdaptiveDQN(DQN):
         self.path_to_results_episode = os.path.join(self.path_to_results, "per_episode.csv")
         """Folder to save results per episode"""
 
-        # maze specific
-        min_distance_path = self.path_to_results+"/tot_dist.tmp"
-        if os.path.isfile(min_distance_path):
-            f = open(min_distance_path, "r").read().splitlines()
-            self.max_reward = 1 - (0.1 / int(f[1])) * (float(f[0]) - 1)
-
+        self.max_reward = max_reward
 
         if self.log["enabled"] or self.plot["enabled"]:
             self.exploration_array = np.zeros(config["trainsteps"])
@@ -85,7 +77,7 @@ class AdaptiveDQN(DQN):
         if not smooth:
             axis.plot(x, y, 'g')
 
-            if plotMaxRew and hasattr(self, 'max_reward'):
+            if plotMaxRew and self.max_reward is not None:
                 axis.plot(x, [self.max_reward]*len(x), 'b')
         else:
             # Smooth with moving average
@@ -93,7 +85,7 @@ class AdaptiveDQN(DQN):
             x_smooth = np.arange(1, len(y_smooth) + 1)
             axis.plot(x_smooth, y_smooth, 'g')
 
-            if plotMaxRew and hasattr(self, 'max_reward'):
+            if plotMaxRew and self.max_reward is not None:
                     axis.plot(x_smooth, [self.max_reward]*len(x_smooth), 'b')
 
         if title is not None and len(title) > 0:
@@ -256,7 +248,7 @@ class AdaptiveDQN(DQN):
 
             # Add intrinsic reward based on the uncertainty counts
             rewards = replay_data.rewards
-            if self.intrinsic_reward:
+            if self.exploration_method == ExplorationMethod.DEEP_EXPLORATION:
                 rewards += self.uncertainty(replay_data.next_observations).unsqueeze(
                     dim=-1)
 
