@@ -16,5 +16,5 @@ do
     done
 done
 rm config.yaml
-#zip -r results2.zip results/.
+zip -r results.zip experiments/maze/results_benchmark1/.
 #head -n -1 AIDM_B_milestone_DQN/experiments/mountaincar/mountaincar.yaml > temp.txt
