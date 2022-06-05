@@ -56,7 +56,7 @@ class AdaptiveDQN(DQN):
         min_distance_path = self.path_to_results+"/tot_dist.tmp"
         if os.path.isfile(min_distance_path):
             f = open(min_distance_path, "r").read().splitlines()
-            self.max_reward = 1 -0.1/float(f[0])*int(f[1])
+            self.max_reward = 1 - (0.1 / int(f[1])) * (float(f[0]) - 1)
 
 
         if self.log["enabled"] or self.plot["enabled"]:
@@ -68,6 +68,7 @@ class AdaptiveDQN(DQN):
             self.episode_milestone_array = []
             self.episode_reward_array = []
             self.episode_total_reward_array = []
+            self.episode_length_array = []
 
         if self.plot["enabled"]:
             self.fig, self.axis = plt.subplots(2, 3, figsize=(12, 10))
@@ -113,6 +114,7 @@ class AdaptiveDQN(DQN):
         self.episode_milestone_array = np.array([ep["num_milestones_reached"] for ep in self.env_wrapper._episode_log])
         self.episode_reward_array = np.array([ep["episode_rewards"] for ep in self.env_wrapper._episode_log])
         self.episode_total_reward_array = np.array([ep["total_rewards"] for ep in self.env_wrapper._episode_log])
+        self.episode_length_array = np.array([ep["episode_length"] for ep in self.env_wrapper._episode_log])
 
     def plot_results(self):
         self.add_plot(self.axis[0, 0], y=self.exploration_array[:self._n_calls - 1], title="Exploration rates",
@@ -232,6 +234,7 @@ class AdaptiveDQN(DQN):
             "milestones_reached": self.episode_milestone_array,
             "reward": self.episode_reward_array,
             "total_reward": self.episode_total_reward_array,
+            "episode_length": self.episode_length_array,
         })
         episode_df.to_csv(self.path_to_results_episode)
 

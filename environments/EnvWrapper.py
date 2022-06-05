@@ -18,10 +18,12 @@ class EnvWrapper:
         # Counter keeps track of initial state as well
         self.counter = None
         self.reset_counter()
+        self._reached_end = False
 
         self._episode_rewards = np.array([])
         self._total_rewards = np.array([])
         self._episode_log = []
+        self._current_episode_length = 0
 
         if self.uses_milestones:
             self.milestones_reached = np.zeros(self.n_milestones, dtype=np.bool)
@@ -38,7 +40,10 @@ class EnvWrapper:
 
     def step(self, action):
         obs, reward, done, info = self.env.step(action=action)
+        self._current_episode_length += 1
         self._episode_rewards = np.append(self._episode_rewards, reward)
+        if done and reward > 0:
+            self._reached_end = True
         if self.uses_milestones:
             # Update the milestones if we are working with the milestone system
             extra_reward = self.update_milestones(obs)
@@ -80,7 +85,7 @@ class EnvWrapper:
         """
         if not self.uses_milestones:
             return 0
-        return self.milestones_reached.sum()
+        return self.milestones_reached.sum() + int(self._reached_end)
 
     def update_counter(self, new_milestones_reached):
         # Shift milestones reached by 1 to the right because first element in counter is for initial position
@@ -94,9 +99,10 @@ class EnvWrapper:
             return
 
         self._episode_log.append({
-            "num_milestones_reached": int(self.milestones_reached.sum()) if self.uses_milestones else 0,
+            "num_milestones_reached": self.get_number_of_milestones_reached(),
             "episode_rewards": self._episode_rewards.sum(),
-            "total_rewards": self._total_rewards.sum()
+            "total_rewards": self._total_rewards.sum(),
+            "episode_length": self._current_episode_length
         })
 
     def reset(self):
@@ -108,6 +114,8 @@ class EnvWrapper:
             self.counter[0] += 1
             self.milestones_reached = np.zeros(self.n_milestones, dtype=np.bool)
             obs = np.append(obs, self.milestones_reached.astype(np.float32))
+        self._current_episode_length = 0
+        self._reached_end = False
         return obs
 
     def total_reset(self):
