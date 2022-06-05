@@ -162,7 +162,7 @@ class AdaptiveDQN(DQN):
                        self.eps_min)
         elif self.exploration_method == ExplorationMethod.ADAPTIVE_4:
             # Method 4
-            #   Look at the current milestone in the list, but use a linear decay function
+            #   Look at the next milestone in the list, but use a linear decay function
             return max(self.eps_zero*(1 - self.env_wrapper.counter[
                 current_milestone + 1]/self.denominator),
                        self.eps_min)
