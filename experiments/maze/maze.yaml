@@ -1,4 +1,3 @@
-demosteps: 1000
 env: "maze-sample-10x10-v0"
 num_milestones: 3
 milestone_reward: 0.3
@@ -30,9 +29,10 @@ uncertainty_kwargs:
   resolution: 10
   first_n_dim: 2
 visualize_environment_only: False # If true then don't train but render the environment given the setup
-trainsteps: 100000
-seed: 123
-exploration_method: "adaptive4" # See ExplorationMethod enum for all exploration methods
 eps_zero: 1.00
 eps_min: 0.05
 denominator: 1000
+demosteps: 1000
+trainsteps: 100000
+seed: 123
+exploration_method: "adaptive4" # See ExplorationMethod enum for all exploration methods
