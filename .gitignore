@@ -137,4 +137,7 @@ experiments/results
 
 results
 results_maze
+results_mc
+plots
+**/*.zip
 experiments/maze/results*
