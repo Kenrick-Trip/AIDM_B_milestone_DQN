@@ -127,29 +127,30 @@ class HistogramSmoothing:
 
 
 def main():
-    # base_dir = "../experiments/maze/results_benchmark1"
-    base_dir = "../experiments/maze/results_maze"
-    result_dirs = [
-        "2022-06-05-t-150946",
-        "2022-06-05-t-151313",
-        "2022-06-05-t-162814",
-        "2022-06-05-t-164722",
-        "2022-06-05-t-171919",
-        "2022-06-05-t-181534",
-        "2022-06-05-t-182623",
-        "2022-06-05-t-182759",
-        "2022-06-05-t-182930",
-        "2022-06-05-t-183229",
-        "2022-06-05-t-183415",
-        "2022-06-05-t-183600",
-        # os.listdir(base_dir)
-    ]
+    # base_dir = "../experiments/maze/results_maze"
+    # result_dirs = [
+        # "2022-06-05-t-150946",
+        # "2022-06-05-t-151313",
+        # "2022-06-05-t-162814",
+        # "2022-06-05-t-164722",
+        # "2022-06-05-t-171919",
+        # "2022-06-05-t-181534",
+        # "2022-06-05-t-182623",
+        # "2022-06-05-t-182759",
+        # "2022-06-05-t-182930",
+        # "2022-06-05-t-183229",
+        # "2022-06-05-t-183415",
+        # "2022-06-05-t-183600",
+    # ]
+    base_dir = "../experiments/maze/results_benchmark2"
+    result_dirs = os.listdir(base_dir)
     result_dirs = [os.path.join(base_dir, result_dir) for result_dir in result_dirs]
-    save_dir = os.path.join(base_dir, "plots")
+    print(result_dirs)
+    save_dir = "plots"
     os.makedirs(save_dir, exist_ok=True)
     save_file = os.path.join(save_dir, "plot.png")
     hs = HistogramSmoothing(result_dirs, "exploration_method",
-                            ["adaptive4", "traditional_milestones", "traditional", "adaptive3"], save_file)
+                            ["adaptive4", "traditional_milestones"], save_file)
     hs.plot()
 
 
