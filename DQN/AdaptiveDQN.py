@@ -31,15 +31,12 @@ class ExplorationMethod(str, Enum):
 
 class AdaptiveDQN(DQN):
     def __init__(self, env_wrapper: EnvWrapper, *args, results_folder, exploration_method: ExplorationMethod, config,
-                 decay_func=np.sqrt, uncertainty=None, \
-                                                                        intrinsic_reward=False,
-                 **kwargs):
+                 decay_func=np.sqrt, uncertainty=None, max_reward=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.env_wrapper = env_wrapper
         self.eps_zero = config["eps_zero"]
         self.decay_func = decay_func
         self.exploration_method = exploration_method
-        self.intrinsic_reward = intrinsic_reward
         self.plot = config["plot"]
         self.log = config["log"]
         self.uncertainty = uncertainty
@@ -52,15 +49,7 @@ class AdaptiveDQN(DQN):
         self.path_to_results_episode = os.path.join(self.path_to_results, "per_episode.csv")
         """Folder to save results per episode"""
 
-        if "maze" in self.env_wrapper.spec.id:
-        # maze specific
-            min_distance_path = self.path_to_results+"/tot_dist.tmp"
-            if os.path.isfile(min_distance_path):
-                f = open(min_distance_path, "r").read().splitlines()
-                self.max_reward = 1 -0.1/float(f[0])*int(f[1])
-        elif "MountainCar" in self.env_wrapper.spec.id:
-        # for new MC with reward = 1, if goal; else, 0.
-            self.max_reward = 1
+        self.max_reward = max_reward
 
         if self.log["enabled"] or self.plot["enabled"]:
             self.exploration_array = np.zeros(config["trainsteps"])
@@ -71,6 +60,7 @@ class AdaptiveDQN(DQN):
             self.episode_milestone_array = []
             self.episode_reward_array = []
             self.episode_total_reward_array = []
+            self.episode_length_array = []
 
         if self.plot["enabled"]:
             self.fig, self.axis = plt.subplots(2, 3, figsize=(12, 10))
@@ -87,7 +77,7 @@ class AdaptiveDQN(DQN):
         if not smooth:
             axis.plot(x, y, 'g')
 
-            if plotMaxRew:
+            if plotMaxRew and self.max_reward is not None:
                 axis.plot(x, [self.max_reward]*len(x), 'b')
         else:
             # Smooth with moving average
@@ -95,7 +85,7 @@ class AdaptiveDQN(DQN):
             x_smooth = np.arange(1, len(y_smooth) + 1)
             axis.plot(x_smooth, y_smooth, 'g')
 
-            if plotMaxRew:
+            if plotMaxRew and self.max_reward is not None:
                     axis.plot(x_smooth, [self.max_reward]*len(x_smooth), 'b')
 
         if title is not None and len(title) > 0:
@@ -116,6 +106,7 @@ class AdaptiveDQN(DQN):
         self.episode_milestone_array = np.array([ep["num_milestones_reached"] for ep in self.env_wrapper._episode_log])
         self.episode_reward_array = np.array([ep["episode_rewards"] for ep in self.env_wrapper._episode_log])
         self.episode_total_reward_array = np.array([ep["total_rewards"] for ep in self.env_wrapper._episode_log])
+        self.episode_length_array = np.array([ep["episode_length"] for ep in self.env_wrapper._episode_log])
 
     def plot_results(self):
         self.add_plot(self.axis[0, 0], y=self.exploration_array[:self._n_calls - 1], title="Exploration rates",
@@ -165,7 +156,7 @@ class AdaptiveDQN(DQN):
                        self.eps_min)
         elif self.exploration_method == ExplorationMethod.ADAPTIVE_4:
             # Method 4
-            #   Look at the current milestone in the list, but use a linear decay function
+            #   Look at the next milestone in the list, but use a linear decay function
             return max(self.eps_zero*(1 - self.env_wrapper.counter[
                 current_milestone + 1]/self.denominator),
                        self.eps_min)
@@ -235,6 +226,7 @@ class AdaptiveDQN(DQN):
             "milestones_reached": self.episode_milestone_array,
             "reward": self.episode_reward_array,
             "total_reward": self.episode_total_reward_array,
+            "episode_length": self.episode_length_array,
         })
         episode_df.to_csv(self.path_to_results_episode)
 
@@ -256,7 +248,7 @@ class AdaptiveDQN(DQN):
 
             # Add intrinsic reward based on the uncertainty counts
             rewards = replay_data.rewards
-            if self.intrinsic_reward:
+            if self.exploration_method == ExplorationMethod.DEEP_EXPLORATION:
                 rewards += self.uncertainty(replay_data.next_observations).unsqueeze(
                     dim=-1)
 

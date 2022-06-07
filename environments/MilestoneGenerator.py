@@ -9,30 +9,36 @@ from environments.gym_maze.envs import MazeEnv
 
 
 class MilestoneGenerator(ABC):
-    def __init__(self, env: gym.Env):
+    def __init__(self, env: gym.Env, config):
         self.env = env
+        self.config = config
+        self.reward = self.config["milestone_reward"]
+        self.n = self.config["num_milestones"]
 
     @abstractmethod
-    def get_milestones(self, n: int) -> List[Milestone]:
+    def get_milestones(self) -> List[Milestone]:
         pass
+
+    def get_max_reward(self) -> Optional[float]:
+        return None
 
 
 class MazeMilestoneGenerator(MilestoneGenerator):
     """Copy of maze_2d_dijkstra.py but then in a class"""
 
-    def __init__(self, env: MazeEnv, reward):
-        super().__init__(env)
+    def __init__(self, env: MazeEnv, config):
+        super().__init__(env, config)
 
         # Number of discrete states (bucket) per state dimension
         self.maze_size = tuple((env.observation_space.high + np.ones(env.observation_space.shape)).astype(int))
         self.num_buckets = self.maze_size  # one bucket per grid
         self.final_state = (self.maze_size[0] - 1, self.maze_size[1] - 1)
         self.actions = ["N", "S", "E", "W"]
-        self.reward = reward
         # Number of discrete actions
         self.num_actions = env.action_space.n
         # Bounds for each discrete state
         self.state_bounds = list(zip(env.observation_space.low, env.observation_space.high))
+        self.total_distance = None
 
         self.compass = {
             "N": (0, -1),
@@ -80,32 +86,27 @@ class MazeMilestoneGenerator(MilestoneGenerator):
                         curDis -= 1
         return dist, shortest_path
 
-    def get_milestones(self, n: int, results_dir: str) -> List[Milestone]:
+    def get_milestones(self) -> List[Milestone]:
         dist, shortest_path = self.solve_dijkstra()
-        tot_dist = dist[tuple(self.final_state)]
-
-        # Write total distance to a file
-        f = open(results_dir + "/tot_dist.tmp", "w")
-        f.write(str(tot_dist)+"\n")
-        f.write(str(self.maze_size[0]))
-        f.close()
-
+        self.total_distance = dist[tuple(self.final_state)]
         milestones = []
-        interval = len(shortest_path[:-1])//(n)
+        interval = len(shortest_path[:-1]) // self.n
         for idx in range(interval, len(shortest_path), interval):
-                # milestones.append(ExactMilestone(reward=dist[tuple(state)], goal_state=state))
+            # milestones.append(ExactMilestone(reward=dist[tuple(state)], goal_state=state))
             milestones.append(ExactMilestone(reward=self.reward, goal_state=shortest_path[idx]))
-            if len(milestones) == n:
+            if len(milestones) == self.n:
                 break
         return list(reversed(milestones))
 
+    def get_max_reward(self):
+        return float(1 - (0.1 / self.maze_size[0]) * (self.total_distance - 1))
+
 
 class MountainCarMilestoneGenerator(MilestoneGenerator):
-    def __init__(self, env: gym.Env, reward):
-        self.reward = reward
-        super().__init__(env)
+    def __init__(self, env: gym.Env, config):
+        super().__init__(env, config)
 
-    def get_milestones(self, n: int,
+    def get_milestones(self,
                        begin_position: Optional[float] = -0.4,
                        end_position: Optional[float] = 0.5) -> List[Milestone]:
         """
@@ -113,8 +114,8 @@ class MountainCarMilestoneGenerator(MilestoneGenerator):
         First milestone will be at begin_position
         Last milestone will be at end_position
         """
-        spacing = (end_position - begin_position) / (n - 1)
-        milestone_locations = [begin_position + i * spacing for i in range(n)]
+        spacing = (end_position - begin_position) / (self.n - 1)
+        milestone_locations = [begin_position + i * spacing for i in range(self.n)]
         milestones = [PassingMilestone(goal_state=np.array([loc, np.nan]), reward=self.reward)
                       for i, loc in enumerate(milestone_locations)]
         return milestones

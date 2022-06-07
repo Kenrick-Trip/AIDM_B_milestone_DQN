@@ -1,37 +1,37 @@
-env: "maze-sample-10x10-v0"
-num_milestones: 3
-milestone_reward: 0.3
+env: "MountainCarMilestones-v0"
+num_milestones: 10
+milestone_reward: 0.05
 policy: "MlpPolicy"
-learning_rate: 0.0005
-
+learning_rate: 0.0001
 plot:
   enabled: False
-  update_interval: 20000
+  update_interval: 10000
   reset_heat_map_every_update: True
   # Configure smoothing per plot
   smooth:
     # Set to True to enable plot smoothing in general
     enabled: True
     # If a plot is not mentioned it will default to False
+    # See plot_results() in AdaptiveDQN.py
     milestones: True
     episode_rewards: True
     total_rewards: True
     n: 11
 log:
   enabled: True
-  save_interval: 20000
+  save_interval: 10000
 policy_kwargs:
   net_arch: [ 64,64 ]
 uncertainty_kwargs:
-  scale: 0.1
+  scale: 1
   state_bounds: null
-  resolution: 10
-  first_n_dim: 2
+  resolution: 25
+  first_n_dim: 1
 visualize_environment_only: False # If true then don't train but render the environment given the setup
 eps_zero: 1.00
 eps_min: 0.05
 denominator: 1000
-demosteps: 1000
-trainsteps: 100000
-seed: 22221
-exploration_method: "adaptive3" # See ExplorationMethod enum for all exploration methods
+demosteps: 10
+trainsteps: 5000
+seed: 123
+exploration_method: "adaptive1" # See ExplorationMethod enum for all exploration methods

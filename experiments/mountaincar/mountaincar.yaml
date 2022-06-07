@@ -2,7 +2,6 @@ env: "MountainCarMilestones-v0"
 num_milestones: 10
 milestone_reward: 0.05
 policy: "MlpPolicy"
-intrinsic_reward: False
 learning_rate: 0.0001
 plot:
   enabled: True
@@ -29,10 +28,10 @@ uncertainty_kwargs:
   resolution: 25
   first_n_dim: 1
 visualize_environment_only: False # If true then don't train but render the environment given the setup
+eps_zero: 1.00
+eps_min: 0.05
+denominator: 1000
 demosteps: 10
 trainsteps: 50000
 seed: 123
 exploration_method: "adaptive1" # See ExplorationMethod enum for all exploration methods
-eps_zero: 1.00
-eps_min: 0.05
-denominator: 1000
