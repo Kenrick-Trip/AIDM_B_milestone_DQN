@@ -16,7 +16,8 @@ class HeatMap:
         if "MountainCar" not in self.env.spec.id:
             raise Exception("1d heatmap only supported for MountainCar")
         data = self.uncertainty.count - self.last_count
-        data = data / max(data)
+        sum_data = sum(data)
+        data = data / sum_data
         self.axis.bar(self.uncertainty.bin_mids, data, width=self.uncertainty.bin_sizes[0], color='g')
         self.axis.set_xlabel("Position")
 

@@ -51,6 +51,9 @@ class AdaptiveDQN(DQN):
 
         self.max_reward = max_reward
 
+        if "MountainCar" in self.env_wrapper.spec.id:
+            self.max_reward = 1
+
         if self.log["enabled"] or self.plot["enabled"]:
             self.exploration_array = np.zeros(config["trainsteps"])
             self.milestone_array = np.zeros(config["trainsteps"])

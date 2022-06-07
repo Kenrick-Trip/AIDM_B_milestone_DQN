@@ -128,23 +128,10 @@ class MountainCarMilestonesEnv(gym.Env):
         if position == self.min_position and velocity < 0:
             velocity = 0
 
-        # if self.m1counter is False and self.milestone1 <= position < self.milestone2:
-        #     self.m1counter = True
-        #     reward = -0.5
-        #
-        # if self.m2counter is False and self.m1counter is True and 0.5 > position >= self.milestone2:
-        #     self.m2counter = True
-        #     reward = -0.3
-
-
-
-        # if self.m3counter is False and position > X.X:
-        #     self.m3counter = True
-
         if position >= self.goal_position:
             reward = 1.0
-        # else:
-        reward = 0.0
+        else:
+            reward = 0.0
 
         done = bool(position >= self.goal_position and velocity >= self.goal_velocity)
 
@@ -161,8 +148,7 @@ class MountainCarMilestonesEnv(gym.Env):
 
         super().reset()
         self.state = np.array([self.np_random.uniform(low=-0.6, high=-0.4), 0])
-        # Reset milestone counters before new episode?
-        # self.m1counter, self.m2counter, self.m3counter = False, False, False
+
         if not return_info:
             return np.array(self.state, dtype=np.float32)
         else:
@@ -252,7 +238,6 @@ class MountainCarMilestonesEnv(gym.Env):
         )
 
         if render_ms:
-            begin_position, end_position = -0.4, 0.5
 
             num_m = len(milestones)
 
