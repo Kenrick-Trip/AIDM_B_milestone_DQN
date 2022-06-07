@@ -52,12 +52,15 @@ class AdaptiveDQN(DQN):
         self.path_to_results_episode = os.path.join(self.path_to_results, "per_episode.csv")
         """Folder to save results per episode"""
 
+        if "maze" in self.env_wrapper.spec.id:
         # maze specific
-        min_distance_path = self.path_to_results+"/tot_dist.tmp"
-        if os.path.isfile(min_distance_path):
-            f = open(min_distance_path, "r").read().splitlines()
-            self.max_reward = 1 -0.1/float(f[0])*int(f[1])
-
+            min_distance_path = self.path_to_results+"/tot_dist.tmp"
+            if os.path.isfile(min_distance_path):
+                f = open(min_distance_path, "r").read().splitlines()
+                self.max_reward = 1 -0.1/float(f[0])*int(f[1])
+        elif "MountainCar" in self.env_wrapper.spec.id:
+        # for new MC with reward = 1, if goal; else, 0.
+            self.max_reward = 1
 
         if self.log["enabled"] or self.plot["enabled"]:
             self.exploration_array = np.zeros(config["trainsteps"])
