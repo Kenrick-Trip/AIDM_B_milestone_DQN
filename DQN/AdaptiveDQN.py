@@ -51,8 +51,10 @@ class AdaptiveDQN(DQN):
 
         self.max_reward = max_reward
 
-        if "MountainCar" in self.env_wrapper.spec.id:
-            self.max_reward = 1
+        if "MountainCarMilestones" in self.env_wrapper.spec.id:
+            self.plot_max_reward = False
+        else:
+            self.plot_max_reward = True
 
         if self.log["enabled"] or self.plot["enabled"]:
             self.exploration_array = np.zeros(config["trainsteps"])
@@ -118,7 +120,7 @@ class AdaptiveDQN(DQN):
                       smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("milestones")))
         self.add_plot(self.axis[1, 0], y=self.episode_reward_array, title="Received rewards", per_episode=True,
                       smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get(
-                          "episode_rewards")), plotMaxRew=True)
+                          "episode_rewards")), plotMaxRew=self.plot_max_reward)
         self.add_plot(self.axis[1, 1], y=self.episode_total_reward_array, title="Total rewards (inc. milestones)", per_episode=True,
                       smooth=self.plot["smooth"]["enabled"] and bool(self.plot["smooth"].get("total_rewards")))
         self.add_plot(self.axis[1, 2], y=self.episode_array[:self._n_calls - 1], title="Elapsed episodes",
@@ -252,8 +254,12 @@ class AdaptiveDQN(DQN):
             # Add intrinsic reward based on the uncertainty counts
             rewards = replay_data.rewards
             if self.exploration_method == ExplorationMethod.DEEP_EXPLORATION:
-                rewards += self.uncertainty(replay_data.next_observations).unsqueeze(
-                    dim=-1)
+                add_rew = self.uncertainty(replay_data.next_observations).unsqueeze(dim=-1)
+                # if sum(add_rew) != add_rew[0]:
+                #     print(print(self.uncertainty(replay_data.next_observations).unsqueeze(dim=-1)))
+                rewards += add_rew
+                # rewards += self.uncertainty(replay_data.next_observations).unsqueeze(
+                #     dim=-1)
 
             with th.no_grad():
                 # Compute the next Q-values using the target network

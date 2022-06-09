@@ -12,14 +12,18 @@ class MazeExperiment(Experiment):
     def __init__(self, config, result_dir):
         super(MazeExperiment, self).__init__(config, result_dir)
 
-    def get_env_wrapper(self, env):
+    def get_env_wrapper(self, env, exploration_method_class):
         milestone_generator = MazeMilestoneGenerator(env, self.config)
         milestones = milestone_generator.get_milestones()
         self.config["max_reward"] = milestone_generator.get_max_reward()
         yaml.safe_dump(self.config, open(os.path.join(self.results_dir, "config.yaml"), "w"))
-        print(milestones)
-        return EnvWrapper(env, milestones)
-
+        if self.exploration_method in [exploration_method_class.TRADITIONAL,
+                                       exploration_method_class.DEEP_EXPLORATION]:
+            # If we're doing traditional epsilon greedy or deep exploration we don't need milestones
+            return EnvWrapper(self.get_env(), [])
+        else:
+            print(milestones)
+            return EnvWrapper(env, milestones)
 
 if __name__ == '__main__':
     base_dir = os.path.dirname(os.path.realpath(__file__))
