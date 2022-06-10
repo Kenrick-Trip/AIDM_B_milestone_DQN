@@ -103,3 +103,9 @@ register(
     entry_point='environments.gym_maze.envs:MazeEnvCustom10x10',
     max_episode_steps=100,
 )
+
+register(
+    id='maze-custom-15x15-v0',
+    entry_point='environments.gym_maze.envs:MazeEnvCustom15x15',
+    max_episode_steps=500,
+)

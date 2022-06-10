@@ -1,4 +1,4 @@
-env: "maze-custom-10x10-v0"
+env: "maze-custom-15x15-v0"
 num_milestones: 2
 milestone_reward: 0.3
 policy: "MlpPolicy"
@@ -27,7 +27,7 @@ uncertainty_kwargs:
   state_bounds: null
   resolution: 15
   first_n_dim: 2
-visualize_environment_only: true # If true then don't train but render the environment given the setup
+visualize_environment_only: false # If true then don't train but render the environment given the setup
 eps_zero: 1.00
 eps_min: 0.05
 denominator: 1000

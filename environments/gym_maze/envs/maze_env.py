@@ -24,12 +24,12 @@ class MazeEnv(gym.Env):
         if maze_file:
             self.maze_view = MazeView2D(maze_name="OpenAI Gym - Maze (%s)" % maze_file,
                                         maze_file_path=maze_file,
-                                        screen_size=(640, 640), 
+                                        screen_size=(640, 640),
                                         enable_render=enable_render)
         elif maze_size:
             if mode == "plus":
                 has_loops = True
-                num_portals = int(round(min(maze_size)/3))
+                num_portals = int(round(min(maze_size) / 3))
             else:
                 has_loops = False
                 num_portals = 0
@@ -46,7 +46,7 @@ class MazeEnv(gym.Env):
         self.init_state = np.asarray(self.maze_size) // 2
 
         # forward or backward in each dimension
-        self.action_space = spaces.Discrete(2*len(self.maze_size))
+        self.action_space = spaces.Discrete(2 * len(self.maze_size))
 
         # observation is the x, y coordinate of the grid
         low = np.zeros(len(self.maze_size), dtype=int)
@@ -85,8 +85,8 @@ class MazeEnv(gym.Env):
             reward = 1
             done = True
         else:
-            reward = -0.1/self.maze_size[0]
-            #reward = -0.1/(self.maze_size[0]*self.maze_size[1])
+            reward = -0.1 / self.maze_size[0]
+            # reward = -0.1/(self.maze_size[0]*self.maze_size[1])
             done = False
 
         self.state = self.maze_view.robot
@@ -196,11 +196,13 @@ class MazeEnvRandom30x30Plus(MazeEnv):
     def __init__(self, enable_render=True):
         super(MazeEnvRandom30x30Plus, self).__init__(maze_size=(30, 30), mode="plus", enable_render=enable_render)
 
+
 class MazeEnvSample11x11(MazeEnv):
 
     def __init__(self, enable_render=True):
         super(MazeEnvSample11x11, self).__init__(maze_file="maze2d_11x11.npy",
-                                                  enable_render=enable_render)
+                                                 enable_render=enable_render)
+
 
 class MazeEnvSample101x101(MazeEnv):
 
@@ -208,11 +210,12 @@ class MazeEnvSample101x101(MazeEnv):
         super(MazeEnvSample101x101, self).__init__(maze_file="maze2d_101x101.npy",
                                                    enable_render=enable_render)
 
+
 class MazeEnvSample21x21(MazeEnv):
 
     def __init__(self, enable_render=True):
         super(MazeEnvSample21x21, self).__init__(maze_file="maze2d_21x21.npy",
-                                                   enable_render=enable_render)
+                                                 enable_render=enable_render)
 
 
 class MazeEnvSample15x15(MazeEnv):
@@ -221,7 +224,14 @@ class MazeEnvSample15x15(MazeEnv):
         super(MazeEnvSample15x15, self).__init__(maze_file="maze2d_15x15.npy",
                                                  enable_render=enable_render)
 
+
 class MazeEnvCustom10x10(MazeEnv):
     def __init__(self, enable_render=True):
         super(MazeEnvCustom10x10, self).__init__(maze_file="maze2d_10x10_custom.npy",
-                                                  enable_render=enable_render)
+                                                 enable_render=enable_render)
+
+
+class MazeEnvCustom15x15(MazeEnv):
+    def __init__(self, enable_render=True):
+        super(MazeEnvCustom15x15, self).__init__(maze_file="maze2d_15x15_custom.npy",
+                                                 enable_render=enable_render)
