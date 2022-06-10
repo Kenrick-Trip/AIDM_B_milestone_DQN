@@ -27,7 +27,7 @@ class Experiment:
     def get_env(self):
         return gym.make(self.config['env'])
 
-    def get_env_wrapper(self, env):
+    def get_env_wrapper(self, env, exploration_method_class):
         raise NotImplementedError("You should implement the wrapper in a subclass!")
 
     def _train(self, model):
@@ -64,12 +64,8 @@ class Experiment:
         # Start learning from the 0th timestep
         learning_starts = 0
 
-        exploration_method = ExplorationMethod(self.config['exploration_method'])
-        if exploration_method in [ExplorationMethod.TRADITIONAL, ExplorationMethod.DEEP_EXPLORATION]:
-            # If we're doing traditional epsilon greedy or deep exploration we don't need milestones
-            env = EnvWrapper(self.get_env(), [])
-        else:
-            env = self.get_env_wrapper(self.get_env())
+        self.exploration_method = ExplorationMethod(self.config['exploration_method'])
+        env = self.get_env_wrapper(self.get_env(), ExplorationMethod)
 
         # Special mode for quick view of environment
         if self.config['visualize_environment_only']:
@@ -80,7 +76,7 @@ class Experiment:
             'uncertainty_kwargs']) if 'uncertainty_kwargs' in self.config else None
 
         model = AdaptiveDQN(env, self.config['policy'], env, results_folder=self.results_dir,
-                            exploration_method=exploration_method, config=self.config,
+                            exploration_method=self.exploration_method, config=self.config,
                             decay_func=lambda x: np.sqrt(x), verbose=1, learning_starts=learning_starts,
                             seed=seed, policy_kwargs=self.config['policy_kwargs'], uncertainty=uncertainty,
                             exploration_fraction=0.8, learning_rate=self.config['learning_rate'],
