@@ -133,6 +133,10 @@ class EnvWrapper:
             if hasattr(self.env, "render_milestones"):
                 self.env.render_milestones(self.milestones)
             self.env.render(mode=mode)
+        # Take screenshot
+        # import pygame, sys
+        # pygame.image.save(self.env.maze_view.screen, "screenshot.jpg")
+        # sys.exit(0)
 
     def close(self):
         self.env.close()

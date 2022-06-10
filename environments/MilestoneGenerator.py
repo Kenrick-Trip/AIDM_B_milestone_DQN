@@ -84,19 +84,20 @@ class MazeMilestoneGenerator(MilestoneGenerator):
                         curTup = neighTup
                         shortest_path.append(curTup)
                         curDis -= 1
-        return dist, shortest_path
+        return dist, list(reversed(shortest_path))
 
     def get_milestones(self) -> List[Milestone]:
         dist, shortest_path = self.solve_dijkstra()
+        print(shortest_path)
         self.total_distance = dist[tuple(self.final_state)]
         milestones = []
-        interval = len(shortest_path[:-1]) // self.n
+        interval = len(shortest_path[:-1]) // (self.n + 1)
         for idx in range(interval, len(shortest_path), interval):
             # milestones.append(ExactMilestone(reward=dist[tuple(state)], goal_state=state))
             milestones.append(ExactMilestone(reward=self.reward, goal_state=shortest_path[idx]))
             if len(milestones) == self.n:
                 break
-        return list(reversed(milestones))
+        return milestones
 
     def get_max_reward(self):
         return float(1 - (0.1 / self.maze_size[0]) * (self.total_distance - 1))
