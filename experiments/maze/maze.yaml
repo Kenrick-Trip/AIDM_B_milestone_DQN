@@ -1,4 +1,4 @@
-env: "maze-custom-15x15-v0"
+env: "maze-custom-15x15-v1"
 num_milestones: 3
 milestone_reward: 0.2
 policy: "MlpPolicy"

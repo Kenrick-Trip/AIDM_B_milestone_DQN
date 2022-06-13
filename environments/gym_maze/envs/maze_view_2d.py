@@ -422,6 +422,27 @@ class MazeBuilder:
             for x, val in enumerate(row):
                 self.set(x, y, val)
 
+    def create_custom_15x15_v1(self):
+        for y, row, in enumerate([
+            [2, 4, 8, 6, 10, 10, 8, 6, 8, 4, 4, 4, 4, 2, 4],
+            [2, 15, 10, 11, 12, 6, 10, 9, 6, 13, 3, 15, 11, 8, 5],
+            [4, 5, 2, 12, 5, 5, 6, 10, 13, 3, 8, 5, 6, 14, 9],
+            [5, 1, 6, 15, 11, 11, 15, 8, 3, 12, 6, 9, 5, 5, 4],
+            [7, 12, 1, 5, 6, 12, 3, 14, 12, 5, 7, 12, 5, 1, 5],
+            [5, 3, 10, 13, 1, 7, 8, 5, 1, 5, 1, 5, 3, 10, 13],
+            [5, 2, 12, 7, 10, 11, 10, 13, 6, 15, 8, 7, 10, 8],
+            [1, 4, 5, 1, 6, 10, 10, 15, 13, 5, 4, 5, 6, 10, 13],
+            [6, 11, 11, 10, 11, 10, 8, 5, 4, 3, 9, 5, 5, 4, 5],
+            [5, 6, 12, 6, 10, 14, 14, 13, 3, 10, 10, 15, 9, 3, 13],
+            [7, 9, 1, 3, 8, 5, 5, 5, 4, 6, 10, 13, 6, 12, 5],
+            [7, 10, 10, 10, 14, 13, 1, 5, 5, 1, 2, 1, 5, 1, 5],
+            [5, 2, 4, 8, 5, 7, 10, 9, 3, 10, 10, 12, 7, 10, 9],
+            [7, 14, 9, 6, 9, 7, 10, 8, 6, 8, 6, 11, 11, 10, 12],
+            [1, 1, 2, 11, 8, 3, 8, 2, 11, 10, 11, 10, 10, 8, 1]
+        ]):
+            for x, val in enumerate(row):
+                self.set(x, y, val)
+
     def create_custom_15x15(self):
         for y, row, in enumerate([
             [2, 4, 8, 6, 10, 10, 8, 6, 8, 4, 4, 4, 4, 2, 4],
@@ -444,6 +465,8 @@ class MazeBuilder:
                 self.set(x, y, val)
 
 
+
+
 class Maze:
     COMPASS = {
         "N": (0, -1),
@@ -463,10 +486,10 @@ class Maze:
 
         # # Construct and save custom maze
         # mzb = MazeBuilder(maze_size=(15, 15))
-        # mzb.create_custom_15x15()
+        # mzb.create_custom_15x15_v1()
         # self.maze_cells = mzb.maze_cells
         # np.save("/home/bas/Documents/Master/Y1/Q4/Algorithms for Intelligent Decision Making Project/Project/"
-        #         "AIDM_B_milestone_DQN/environments/gym_maze/envs/maze_samples/maze2d_15x15_custom.npy", self.maze_cells)
+        #         "AIDM_B_milestone_DQN/environments/gym_maze/envs/maze_samples/maze2d_15x15_custom_v1.npy", self.maze_cells)
 
         # Use existing one if exists
         if self.maze_cells is not None:

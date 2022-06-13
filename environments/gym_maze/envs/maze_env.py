@@ -235,3 +235,9 @@ class MazeEnvCustom15x15(MazeEnv):
     def __init__(self, enable_render=True):
         super(MazeEnvCustom15x15, self).__init__(maze_file="maze2d_15x15_custom.npy",
                                                  enable_render=enable_render)
+
+
+class MazeEnvCustom15x15v1(MazeEnv):
+    def __init__(self, enable_render=True):
+        super(MazeEnvCustom15x15v1, self).__init__(maze_file="maze2d_15x15_custom_v1.npy",
+                                                 enable_render=enable_render)
