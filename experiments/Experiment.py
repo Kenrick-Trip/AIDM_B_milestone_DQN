@@ -79,11 +79,15 @@ class Experiment:
                             exploration_method=self.exploration_method, config=self.config,
                             decay_func=lambda x: np.sqrt(x), verbose=1, learning_starts=learning_starts,
                             seed=seed, policy_kwargs=self.config['policy_kwargs'], uncertainty=uncertainty,
-                            exploration_fraction=0.8, learning_rate=self.config['learning_rate'],
-                            max_reward=self.config.get("max_reward"))
+                            exploration_fraction=0.95, learning_rate=self.config['learning_rate'],
+                            max_reward=self.config.get("max_reward"),
+                            gradient_steps=self.config.get("gradient_steps"), train_freq=(1,
+                                                                                          'episode'),
+                            batch_size=self.config.get("batch_size"),
+                            buffer_size=self.config.get("buffer_size"))
 
         self._train(model)
-        self._demo(env, model)
+        # self._demo(env, model)
 
     @staticmethod
     def _read_yaml(file: str, absolute=False):

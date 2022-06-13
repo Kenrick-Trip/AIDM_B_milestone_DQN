@@ -1,8 +1,11 @@
 env: "maze-custom-15x15-v0"
-num_milestones: 2
-milestone_reward: 0.3
+num_milestones: 3
+milestone_reward: 0.2
 policy: "MlpPolicy"
-learning_rate: 0.0005
+learning_rate: 0.0001
+gradient_steps: 64
+batch_size: 32
+buffer_size: 600000
 
 plot:
   enabled: False
@@ -11,7 +14,7 @@ plot:
   # Configure smoothing per plot
   smooth:
     # Set to True to enable plot smoothing in general
-    enabled: True
+    enabled: False
     # If a plot is not mentioned it will default to False
     milestones: True
     episode_rewards: True
@@ -30,8 +33,8 @@ uncertainty_kwargs:
 visualize_environment_only: false # If true then don't train but render the environment given the setup
 eps_zero: 1.00
 eps_min: 0.05
-denominator: 1000
+denominator: 3000 # For methods adaptive3 and adaptive4
 demosteps: 1000
-trainsteps: 300000
-seed: 22221
-exploration_method: "adaptive4" # See ExplorationMethod enum for all exploration methods
+trainsteps: 2500000
+seed: 123
+exploration_method: "adaptive4" # See ExplorationMethod enum for all methods

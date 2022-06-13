@@ -57,10 +57,10 @@ class AdaptiveDQN(DQN):
             self.plot_max_reward = True
 
         if self.log["enabled"] or self.plot["enabled"]:
-            self.exploration_array = np.zeros(config["trainsteps"])
-            self.milestone_array = np.zeros(config["trainsteps"])
-            self.reward_array = np.zeros(config["trainsteps"])
-            self.episode_array = np.zeros(config["trainsteps"])
+            self.exploration_array = np.zeros(config["trainsteps"]+500)
+            self.milestone_array = np.zeros(config["trainsteps"]+500)
+            self.reward_array = np.zeros(config["trainsteps"]+500)
+            self.episode_array = np.zeros(config["trainsteps"]+500)
 
             self.episode_milestone_array = []
             self.episode_reward_array = []
