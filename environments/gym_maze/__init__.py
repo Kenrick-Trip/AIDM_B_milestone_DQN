@@ -115,3 +115,21 @@ register(
     entry_point='environments.gym_maze.envs:MazeEnvCustom15x15v1',
     max_episode_steps=500,
 )
+
+register(
+    id='maze-custom-15x15-v1-500',
+    entry_point='environments.gym_maze.envs:MazeEnvCustom15x15v1',
+    max_episode_steps=500,
+)
+
+register(
+    id='maze-custom-15x15-v1-800',
+    entry_point='environments.gym_maze.envs:MazeEnvCustom15x15v1',
+    max_episode_steps=800,
+)
+
+register(
+    id='maze-custom-15x15-v1-1100',
+    entry_point='environments.gym_maze.envs:MazeEnvCustom15x15v1',
+    max_episode_steps=1100,
+)
