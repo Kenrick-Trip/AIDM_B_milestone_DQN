@@ -3,7 +3,7 @@
 RANDOM=$$
 for rep in 1 2 3 4 5
 do
-    for value in 600000 1000000 1400000
+    for value in 1400000 600000 1000000
     do
       cp experiments/maze/configurations/buffer/15x15.yaml config.yaml
             head -n -2 config.yaml > temp.txt ; mv temp.txt config.yaml
