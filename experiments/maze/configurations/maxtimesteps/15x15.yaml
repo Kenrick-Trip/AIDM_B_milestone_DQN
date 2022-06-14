@@ -40,4 +40,4 @@ denominator: 3000 # PARAMETER IN RUNSCRIPT
 gradient_steps: 64 # PARAMETER IN RUNSCRIPT
 
 seed: 123 # PARAMETER IN RUNSCRIPT
-env: "maze-custom-15x15-v1" # PARAMETER IN RUNSCRIPT
+env: "maze-custom-15x15-v1-500" # PARAMETER IN RUNSCRIPT
