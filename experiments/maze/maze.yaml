@@ -34,7 +34,8 @@ visualize_environment_only: false # If true then don't train but render the envi
 eps_zero: 1.00
 eps_min: 0.05
 denominator: 3000 # For methods adaptive3 and adaptive4
+decay_rate: 3.5e-7
 demosteps: 1000
 trainsteps: 2500000
 seed: 123
-exploration_method: "adaptive4" # See ExplorationMethod enum for all methods
+exploration_method: "traditional_milestones" # See ExplorationMethod enum for all methods

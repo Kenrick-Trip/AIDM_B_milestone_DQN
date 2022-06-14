@@ -42,6 +42,7 @@ class AdaptiveDQN(DQN):
         self.uncertainty = uncertainty
         self.eps_min = config["eps_min"]
         self.denominator = config["denominator"]
+        self.decay_rate = config["decay_rate"]
 
         self.path_to_results = results_folder
         self.path_to_results_timestep = os.path.join(self.path_to_results, "per_timestep.csv")
@@ -167,7 +168,8 @@ class AdaptiveDQN(DQN):
                        self.eps_min)
         else:
             # If exploration method is not an adaptive method, we just use the regular linear decay
-            return self.exploration_schedule(self._current_progress_remaining)
+            return max(1 - self.decay_rate * self._n_calls, 0.05)
+            # return self.exploration_schedule(self._current_progress_remaining)
 
     def _on_step(self):
         """Overwrite _on_step method from DQN class"""
