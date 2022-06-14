@@ -1,0 +1,43 @@
+num_milestones: 3
+milestone_reward: 0.2
+policy: "MlpPolicy"
+learning_rate: 0.0001
+batch_size: 32
+plot:
+  enabled: False
+  update_interval: 20000
+  reset_heat_map_every_update: True
+  # Configure smoothing per plot
+  smooth:
+    # Set to True to enable plot smoothing in general
+    enabled: False
+    # If a plot is not mentioned it will default to False
+    milestones: True
+    episode_rewards: True
+    total_rewards: True
+    n: 11
+log:
+  enabled: True
+  save_interval: 20000
+policy_kwargs:
+  net_arch: [ 64,64 ]
+uncertainty_kwargs:
+  scale: 0.1
+  state_bounds: null
+  resolution: 15
+  first_n_dim: 2
+visualize_environment_only: false # If true then don't train but render the environment given the setup
+eps_zero: 1.00
+eps_min: 0.05
+decay_rate: 3.5e-7
+demosteps: 1000
+trainsteps: 3000000
+exploration_method: "adaptive4" # See ExplorationMethod enum for all methods
+results_folder: "results_maxtimesteps"
+
+buffer_size: 600000 # PARAMETER IN RUNSCRIPT
+denominator: 3000 # PARAMETER IN RUNSCRIPT
+gradient_steps: 64 # PARAMETER IN RUNSCRIPT
+
+seed: 123 # PARAMETER IN RUNSCRIPT
+env: "maze-custom-15x15-v1" # PARAMETER IN RUNSCRIPT
