@@ -15,12 +15,12 @@ fi
 RANDOM=$$
 for rep in 1 2 3 4 5
 do
-      cp experiments/maze/configurations/architecture/15x15.yaml config_arch.yaml
-            head -n -4 config_arch.yaml > temp_arch.txt ; mv temp_arch.txt config_arch.yaml
-      echo -e "  net_arch: [$1, $1, $1]" >> config_arch.yaml
-      echo "seed: $RANDOM" >> config_arch.yaml
-      echo "exploration_method: '$2'" >> config_arch.yaml
-      echo "results_folder: '$1_$2'" >> config_arch.yaml
-      python3 experiments/maze/main.py -c config_arch.yaml
+      cp experiments/maze/configurations/architecture/15x15.yaml "/tmp/config_$1_$2.yaml"
+            head -n -4 "/tmp/config_$1_$2.yaml" > "/tmp/temp_$1_$2.txt" ; mv "/tmp/temp_$1_$2.txt" "/tmp/config_$1_$2.yaml"
+      echo -e "  net_arch: [$1, $1, $1]" >> "/tmp/config_$1_$2.yaml"
+      echo "seed: $RANDOM" >> "/tmp/config_$1_$2.yaml"
+      echo "exploration_method: '$2'" >> "/tmp/config_$1_$2.yaml"
+      echo "results_folder: '$1_$2'" >> "/tmp/config_$1_$2.yaml"
+      python3 experiments/maze/main.py -c "/tmp/config_$1_$2.yaml"
 done
-rm config_arch.yaml
+#rm "/tmp/config_$1_$2.yaml"
