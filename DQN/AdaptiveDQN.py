@@ -168,7 +168,7 @@ class AdaptiveDQN(DQN):
                        self.eps_min)
         else:
             # If exploration method is not an adaptive method, we just use the regular linear decay
-            return max(1 - self.decay_rate * self._n_calls, 0.05)
+            return max(self.eps_zero - self.decay_rate * self._n_calls, self.eps_min)
             # return self.exploration_schedule(self._current_progress_remaining)
 
     def _on_step(self):
