@@ -30,7 +30,6 @@ eps_min: 0.05
 decay_rate: 3.5e-7
 demosteps: 1000
 trainsteps: 3000000
-results_folder: "results_buffer"
 
 env: "maze-custom-15x15-v1-500" # PARAMETER IN RUNSCRIPT
 denominator: 3000 # PARAMETER IN RUNSCRIPT
@@ -41,3 +40,4 @@ policy_kwargs:
   net_arch: [64,64]
 exploration_method: "adaptive4" # See ExplorationMethod enum for all methods
 seed: 123 # PARAMETER IN RUNSCRIPT
+results_folder: "results_buffer"
