@@ -5,6 +5,7 @@ import gym
 import numpy as np
 import yaml
 from DQN.AdaptiveDQN import AdaptiveDQN, ExplorationMethod
+from stable_baselines3.common.callbacks import EvalCallback
 from DQN.uncertainty import CountUncertainty
 from stable_baselines3.common.logger import configure
 import argparse
@@ -31,9 +32,13 @@ class Experiment:
         raise NotImplementedError("You should implement the wrapper in a subclass!")
 
     def _train(self, model):
+        self.exploration_method = ExplorationMethod(self.config['exploration_method'])
+        eval_env = self.get_env_wrapper(self.get_env(), ExplorationMethod)
+        eval_callback = EvalCallback(eval_env, log_path='./logs/', eval_freq=20000,
+                                     deterministic=True, render=False)
         model.env_wrapper.total_reset()
         model.set_logger(self.logger)
-        model.learn(total_timesteps=self.config["trainsteps"])
+        model.learn(total_timesteps=self.config["trainsteps"], callback=eval_callback)
 
     @staticmethod
     def _prepare_demo(env):
