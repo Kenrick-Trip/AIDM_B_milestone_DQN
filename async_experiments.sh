@@ -7,11 +7,11 @@ printf "terminating all previously running experiments .."
 
 # --- 128x128x128 adaptive4 --
 export PYTHONPATH="${PYTHONPATH}:/AIDM_B_milestone_DQN/"
-screen -S aa -d -m bash -c './experiments/maze/configurations/architecture/run_experiments.sh 128 adaptive4; exec bash'
+screen -S aa -d -m bash -c './experiments/maze/configurations/architecture/run_experiments.sh 128 adaptive4 3; exec bash'
 
 # --- 128x128x128 trad ---
 export PYTHONPATH="${PYTHONPATH}:/AIDM_B_milestone_DQN/"
-screen -S ab -d -m bash -c './experiments/maze/configurations/architecture/run_experiments.sh 128 traditional_milestones; exec bash'
+screen -S ab -d -m bash -c './experiments/maze/configurations/architecture/run_experiments.sh 128 traditional_milestones 3; exec bash'
 
 # --- 256x256x256 adaptive4---
 #export PYTHONPATH="${PYTHONPATH}:/AIDM_B_milestone_DQN/"
