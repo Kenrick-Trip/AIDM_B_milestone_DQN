@@ -32,7 +32,7 @@ class Experiment:
         raise NotImplementedError("You should implement the wrapper in a subclass!")
 
     def _train(self, env, model):
-        eval_callback = EvalCallback(env, log_path='./logs/', eval_freq=self.config["eval_rate"],
+        eval_callback = EvalCallback(env, log_path=self.results_dir, eval_freq=self.config["eval_rate"],
                                      deterministic=True, render=False)
         model.env_wrapper.total_reset()
         model.set_logger(self.logger)
