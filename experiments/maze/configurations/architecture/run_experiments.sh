@@ -26,7 +26,7 @@ do
       echo -e "  net_arch: [$1, $1, $1]" >> "/tmp/config_$1_$2.yaml"
       echo "seed: $RANDOM" >> "/tmp/config_$1_$2.yaml"
       echo "exploration_method: '$2'" >> "/tmp/config_$1_$2.yaml"
-      echo "results_folder: '$1_$2'" >> "/tmp/config_$1_$2.yaml"
+      echo "results_folder: '$1_$2_$3'" >> "/tmp/config_$1_$2.yaml"
       echo "num_milestones: $3" >> "/tmp/config_$1_$2.yaml"
       python3 experiments/maze/main.py -c "/tmp/config_$1_$2.yaml"
 done
