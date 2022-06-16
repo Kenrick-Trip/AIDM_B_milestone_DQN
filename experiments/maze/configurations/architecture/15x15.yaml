@@ -1,4 +1,5 @@
 milestone_reward: 0.2
+eval_rate: 50000
 policy: "MlpPolicy"
 learning_rate: 0.0001
 batch_size: 32
@@ -30,7 +31,7 @@ decay_rate: 3.5e-7
 demosteps: 1000
 trainsteps: 3000000
 
-env: "maze-custom-15x15-v1-500" # PARAMETER IN RUNSCRIPT
+env: "maze-custom-15x15-v1500" # PARAMETER IN RUNSCRIPT
 denominator: 3000 # PARAMETER IN RUNSCRIPT
 gradient_steps: 64 # PARAMETER IN RUNSCRIPT
 buffer_size: 600000 # PARAMETER IN RUNSCRIPT
