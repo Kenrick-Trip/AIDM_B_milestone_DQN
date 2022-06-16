@@ -1,26 +1,26 @@
 #source conda activate afidm
 printf "terminating all previously running experiments .."
-screen -XS buffer quit; screen -XS denom quit; screen -XS maxtime quit; screen -XS grad quit
+#screen -XS buffer quit; screen -XS denom quit; screen -XS maxtime quit; screen -XS grad quit
 
-printf "\nremoving results folder..\n"
-rm -rf experiments/maze/results
+#printf "\nremoving results folder..\n"
+#rm -rf experiments/maze/results
 
-# --- buffer ---
+# --- 128x128x128 adaptive4 --
 export PYTHONPATH="${PYTHONPATH}:/AIDM_B_milestone_DQN/"
-screen -S buffer -d -m bash -c './experiments/maze/configurations/buffer/run_experiments.sh; exec bash'
+screen -S aa -d -m bash -c './experiments/maze/configurations/architecture/run_experiments.sh 128 adaptive4; exec bash'
 
-# --- denominator ---
+# --- 128x128x128 trad ---
 export PYTHONPATH="${PYTHONPATH}:/AIDM_B_milestone_DQN/"
-screen -S denominator -d -m bash -c './experiments/maze/configurations/denominator/run_experiments.sh; exec bash'
+screen -S ab -d -m bash -c './experiments/maze/configurations/architecture/run_experiments.sh 128 traditional_milestones; exec bash'
 
-# --- maxtimesteps ---
-export PYTHONPATH="${PYTHONPATH}:/AIDM_B_milestone_DQN/"
-screen -S maxtimesteps -d -m bash -c './experiments/maze/configurations/maxtimesteps/run_experiments.sh; exec bash'
+# --- 256x256x256 adaptive4---
+#export PYTHONPATH="${PYTHONPATH}:/AIDM_B_milestone_DQN/"
+#screen -S ba -d -m bash -c './experiments/maze/configurations/architecture/run_experiments.sh 256 adaptive4; exec bash'
 
-# --- gradientsteps ---
-export PYTHONPATH="${PYTHONPATH}:/AIDM_B_milestone_DQN/"
-screen -S gradientsteps -d -m bash -c './experiments/maze/configurations/gradientsteps/run_experiments.sh; exec bash'
+# --- 256x256x256 trad ---
+#export PYTHONPATH="${PYTHONPATH}:/AIDM_B_milestone_DQN/"
+#screen -S bb -d -m bash -c './experiments/maze/configurations/architecture/run_experiments.sh 256 traditional_milestones; exec bash'
 
 printf "\n--- Started screen shells with experiments, they will not terminate automatically (because of ending with exec bash) --- \n\n"
 screen -list
-printf "\n--- to terminate all sessions, execute:     screen -XS buffer quit; screen -XS denom quit; screen -XS maxtime quit; screen -XS grad quit\n"
+printf "\n--- to terminate all sessions, execute:     screen -XS aa quit; screen -XS ab quit; screen -XS ba quit; screen -XS bb quit\n"
