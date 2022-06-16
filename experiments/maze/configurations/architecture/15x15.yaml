@@ -1,5 +1,5 @@
 milestone_reward: 0.2
-eval_rate: 50000
+eval_rate: 20000
 policy: "MlpPolicy"
 learning_rate: 0.0001
 batch_size: 32
