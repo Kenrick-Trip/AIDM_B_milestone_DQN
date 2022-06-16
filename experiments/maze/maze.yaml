@@ -36,6 +36,7 @@ eps_min: 0.05
 denominator: 3000 # For methods adaptive3 and adaptive4
 decay_rate: 3.5e-7
 demosteps: 1000
-trainsteps: 2500000
+trainsteps: 100100
+eval_rate: 50000 # Evaluate after every eval_rate timesteps
 seed: 123
 exploration_method: "traditional_milestones" # See ExplorationMethod enum for all methods
