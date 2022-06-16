@@ -31,10 +31,8 @@ class Experiment:
     def get_env_wrapper(self, env, exploration_method_class):
         raise NotImplementedError("You should implement the wrapper in a subclass!")
 
-    def _train(self, model):
-        self.exploration_method = ExplorationMethod(self.config['exploration_method'])
-        eval_env = self.get_env_wrapper(self.get_env(), ExplorationMethod)
-        eval_callback = EvalCallback(eval_env, log_path='./logs/', eval_freq=20000,
+    def _train(self, env, model):
+        eval_callback = EvalCallback(env, log_path='./logs/', eval_freq=self.config["eval_rate"],
                                      deterministic=True, render=False)
         model.env_wrapper.total_reset()
         model.set_logger(self.logger)
@@ -91,7 +89,7 @@ class Experiment:
                             batch_size=self.config.get("batch_size"),
                             buffer_size=self.config.get("buffer_size"))
 
-        self._train(model)
+        self._train(env, model)
         # self._demo(env, model)
 
     @staticmethod
