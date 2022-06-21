@@ -146,8 +146,8 @@ class MountainCarMilestonesEnv(gym.Env):
             options: Optional[dict] = None,
     ):
 
-        super().reset()
-        self.state = np.array([self.np_random.uniform(low=-0.6, high=-0.4), 0])
+        # super().reset()
+        self.state = np.array([np.random.uniform(low=-0.6, high=-0.4), 0])
 
         if not return_info:
             return np.array(self.state, dtype=np.float32)

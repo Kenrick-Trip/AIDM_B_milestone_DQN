@@ -17,9 +17,9 @@ class HeatMap:
             raise Exception("1d heatmap only supported for MountainCar")
         data = self.uncertainty.count - self.last_count
         sum_data = sum(data)
-        data = data / sum_data
-        self.axis.bar(self.uncertainty.bin_mids, data, width=self.uncertainty.bin_sizes[0], color='g')
-        self.axis.set_xlabel("Position")
+        data = data / sum(sum_data)
+        # self.axis.bar(self.uncertainty.bin_mids, data, width=self.uncertainty.bin_sizes[0], color='g')
+        # self.axis.set_xlabel("Position")
 
     def generate2D(self):
         if self.colorbar is not None:
