@@ -26,7 +26,7 @@ class MountainCarExperiment(Experiment):
 if __name__ == '__main__':
     base_dir = os.path.dirname(os.path.realpath(__file__))
     config, config_file = MountainCarExperiment.get_config_from_args(default_file="mountaincar.yaml")
-    result_dir = os.path.join(base_dir, "results_mc", datetime.now().strftime("%Y-%m-%d-t-%H%M%S"))
+    result_dir = os.path.join(base_dir, "results_mc_run_bas1", datetime.now().strftime("%Y-%m-%d-t-%H%M%S"))
     os.makedirs(result_dir)
     shutil.copy(config_file, os.path.join(result_dir, "config.yaml"))
     MountainCarExperiment(config, result_dir).main()
