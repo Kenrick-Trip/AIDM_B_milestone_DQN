@@ -63,7 +63,11 @@ class Experiment:
         """Example for running the AdaptiveDQN"""
 
         # Set seed for reproducibility
-        seed = self.config['seed']
+        if 'seed' not in self.config:
+            seed = np.random.randint(10000)
+            self.config['seed'] = seed
+        else:
+            seed = self.config['seed']
         # Start learning from the 0th timestep
         learning_starts = 0
 

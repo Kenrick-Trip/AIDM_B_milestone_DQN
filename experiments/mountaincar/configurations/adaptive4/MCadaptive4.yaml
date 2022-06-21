@@ -8,7 +8,7 @@ batch_size: 32
 buffer_size: 600000
 
 plot:
-  enabled: True
+  enabled: False
   update_interval: 10000
   reset_heat_map_every_update: True
   # Configure smoothing per plot
@@ -41,4 +41,3 @@ trainsteps: 800000
 eval_rate: 10000 # Evaluate after every eval_rate timesteps
 exploration_method: "adaptive4" # See ExplorationMethod enum for all methods
 exploration_fraction: 0.1
-
