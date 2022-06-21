@@ -38,7 +38,7 @@ denominator: 500 # For methods adaptive3 and adaptive4
 decay_rate: 3.5e-6
 demosteps: 1000
 trainsteps: 800000
-eval_rate: 50000 # Evaluate after every eval_rate timesteps
+eval_rate: 10000 # Evaluate after every eval_rate timesteps
 seed: 123
 exploration_method: "adaptive4" # See ExplorationMethod enum for all methods
 exploration_fraction: 0.1
